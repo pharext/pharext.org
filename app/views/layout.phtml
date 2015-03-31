@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>
+			<?php if (!empty($title)) : ?>
+				<?= $this->e($title) ?>
+			<?php endif; ?>
+			PHARext
+		</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+		<link rel="stylesheet" href="<?= $baseUrl->mod("./octicons/octicons.css") ?>">
+		<link rel="stylesheet" href="<?= $baseUrl->mod("./index.css") ?>">
+	</head>
+	<body>
+		<?php include "navbar.phtml" ?>
+		<div id="content" class="<?= (isset($container) && !$container) ? "":"container" ?>">
+			
+			<?= $this->section("content") ?>
+			
+		</div>
+		<footer class="footer">
+			<div class="container">
+				<p>
+					&copy; 2015 m6w6, Michael Wallner — Powered by <a href="//github.com/m6w6/pharext">pharext
+					<?php
+					include_once __DIR__."/../../vendor/m6w6/pharext/src/pharext/Version.php";
+					echo pharext\VERSION;
+					?>
+					</a>
+				</p>
+			</div>
+		</footer>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+	</body>
+</html>

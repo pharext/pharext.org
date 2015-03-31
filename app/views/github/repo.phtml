@@ -1,0 +1,156 @@
+<?php $this->layout("layout") ?>
+
+<div class="page-header">
+	<h1>
+		<?php if (isset($repo)) : ?>
+			<?php if ($repo->fork) : ?>
+				<span title="fork" class="mega-octicon octicon-repo-forked" aria-hidden="true"></span>
+			<?php elseif ($repo->private) : ?>
+				<span title="fork" class="mega-octicon octicon-key" aria-hidden="true"></span>
+			<?php else : ?>
+				<span title="repo" class="mega-octicon octicon-repo" aria-hidden="true"></span>
+			<?php endif; ?>
+			<?= $this->e($repo->name) ?>
+		<?php elseif (isset($name)) : ?>
+			<?= $this->e($name) ?>
+		<?php else : ?>
+			Unknown Repository
+		<?php endif; ?>
+			- <small>Github</small>
+	</h1>
+</div>
+
+<?php if (isset($exception)) : ?>
+	<?= $this->fetch("alert") ?>
+<?php elseif (isset($repo)) : ?>
+
+<div class="row">
+	<div class="col-md-6">
+		<div class="well">
+			<p><?= $this->e($repo->description) ?></p>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="row text-center">
+			<div class="col-md-4">
+				<span title="Number of watchers" class="mega-octicon octicon-eye" aria-hidden="true"></span>
+				<br>
+				<span class="label label-success">
+					<?= $repo->watchers_count ?> Watchers
+				</span>
+			</div>
+			<div class="col-md-4">
+				<span title="Number of stars" class="mega-octicon octicon-star" aria-hidden="true"></span>
+				<br>
+				<span class="label label-primary">
+					<?= $repo->stargazers_count ?> Stars
+				</span>
+			</div>
+			<div class="col-md-4">
+				<span title="Number of forks" class="mega-octicon octicon-repo-forked" aria-hidden="true"></span>
+				<br>
+				<span class="label label-default">
+					<?= $repo->forks_count ?> Forks
+				</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6">
+		<div class="row">
+			<div class="col-md-8">
+				<p>Has a <code>config*.m4</code> file?</p>
+			</div>
+			<div class="col-md-4 text-center">
+				<p><span class="label label-info">YES</span></p>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-8">
+				<p>Has a <code>package*.xml</code> file?</p>
+			</div>
+			<div class="col-md-4 text-center">
+				<p><span class="label label-warning">NO</span></p>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-8">
+				<p>Has a <code>pharext_package.php</code> file?</p>
+			</div>
+			<div class="col-md-4 text-center">
+				<p><span class="label label-info">YES</span></p>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-8">
+				<p>Is the <code>pharext</code> hook enabled?</p>
+			</div>
+			<div class="col-md-4 text-center">
+				<p><span class="label label-warning">NO</span></p>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-6">
+		<div class="row text-center">
+			<div class="col-md-6">
+				<button class="btn btn-lg btn-block btn-success">Enable Hook</button>
+			</div>
+			<div class="col-md-6">
+				<button class="btn btn-lg btn-block btn-danger disabled">Disable Hook</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<h2>Release History</h2>
+
+<?php foreach ($repo->tags as $name => $v) : ?>
+<div class="panel panel-<?= empty($v->release) ? "info": "primary" ?>">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			<?php if (empty($v->release)) : ?>
+				<?= $this->e($v->tag->name) ?>
+				<span class="label label-default pull-right">Tag</span>
+			<?php else : ?>
+				<?= $this->e($v->release->name) ?>
+				<span class="label label-default pull-right">Release</span>
+			<?php endif; ?>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<?php if (!empty($v->release)) : ?>
+			<p><?= $this->md($v->release->body) ?></p>
+		<?php endif; ?>
+		<ul class="list-inline">
+			<li>
+				<span class="octicon octicon-tag" title="Tag"></span>
+				<span class="label label-default"><?= $this->e($v->tag->name) ?></span>
+			</li>
+
+			<?php if (!empty($v->release)) : ?>
+			<li>
+				<span class="octicon octicon-git-branch" title="Branch"></span>
+				<span class="label label-default"><?= $this->e($v->release->target_commitish) ?></span>
+			</li>
+			<li>
+				<span class="octicon octicon-clock" title="Date"></span>
+				<span class="label label-default">
+					<time datetime="<?= $v->release->published_at ?>">
+						<?= $this->utc($v->release->published_at)->format("Y-m-d H:i T") ?>
+					</time>
+				</span>
+			<?php endif; ?>
+		</ul>
+	</div>
+</div>
+<?php endforeach; ?>
+
+<pre><?php var_dump($repo) ?></pre>
+
+<?php endif; ?>

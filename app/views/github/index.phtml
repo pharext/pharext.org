@@ -1,0 +1,65 @@
+<?php $this->layout("layout") ?>
+
+<div class="page-header">
+	<h1>
+		Github Repositories
+		<small>Manage your pharext webhook</small>
+	</h1>
+</div>
+
+<?php if (isset($exception)) : ?>
+	<?= $this->fetch("alert") ?>
+<?php elseif (isset($repos)) : ?>
+
+<table class="table table-hover">
+	<thead>
+		<tr>
+			<th>Repo</th>
+			<th class="text-center">Fork</th>
+			<th class="text-right">Last Pushed</th>
+			<th class="text-right">Hook</th>
+		</tr>
+	</thead>
+	<tbody>
+		<?php foreach ($repos as $repo) : ?>
+		<tr class="<?= $this->check($repo) ? "success" : "" ?>">
+			<th>
+				<a href="<?= $baseUrl->mod("./github/repo/".$repo->full_name) ?>">
+					<big class="text-primary" title="<?= $this->e($repo->description) ?>"><?= $this->e($repo->name) ?></big>
+				</a>
+				<br>
+				<small><?= $this->e($this->shorten($repo->description)) ?></small>
+			</th>
+			<td class="text-center"><?php if ($repo->fork) : ?>
+				<span title="fork" class="octicon octicon-repo-forked" aria-hidden="true"></span>
+				<?php endif; ?>
+			</td>
+			<td class="text-right"><time datetime="<?= $this->e($repo->pushed_at) ?>"><?= $this->e($this->utc($repo->pushed_at)->format("Y-m-d H:i T")) ?></time></td>
+			<td class="text-right">
+				<a class="btn btn-primary <?= $this->check($repo) ? "disabled":"" ?>"
+				   href="<?= $baseUrl->mod("./github/repo/".$repo->full_name) ?>">
+					<span class="glyphicon glyphicon-plus" title="Add pharext hook"></span></a>
+				<a class="btn btn-danger <?= !$this->check($repo) ? "disabled":"" ?>"
+				   href="<?= $baseUrl->mod(["path" => "github/repo", "query" => "hook=del&repo=". urlencode($repo->full_name)]) ?>">
+					<span class="glyphicon glyphicon-remove" title="Remove hook"></span></a>
+			</td>
+		</tr>
+		<?php endforeach; ?>
+	</tbody>
+</table>
+
+<nav>
+	<ul class="pager">
+		<?php
+		$first= $this->link("first");
+		$prev = $this->link("prev");
+		$next = $this->link("next");
+		$last = $this->link("last");
+		?>
+		<li class="<?= $first ?"":"disabled" ?>"><a href="?page=<?= $first ?>" title="First Page"><span class="glyphicon glyphicon-fast-backward"></span></a></li>
+		<li class="<?= $prev ?"":"disabled" ?>"><a href="?page=<?= $prev ?>" rel="prev" title="Previous Page"><span class="glyphicon glyphicon-chevron-left"></span> Previous</a></li>
+		<li class="<?= $next ?"":"disabled" ?>"><a href="?page=<?= $next ?>" rel="next" title="Next Page">Next <span class="glyphicon glyphicon-chevron-right"></span></a></li>
+		<li class="<?= $last ?"":"disabled" ?>"><a href="?page=<?= $last ?>" title="Last Page"><span class="glyphicon glyphicon-fast-forward"></span></a></li>
+	</ul>
+</nav>
+<?php endif; ?>

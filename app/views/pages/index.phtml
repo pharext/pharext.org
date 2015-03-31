@@ -1,0 +1,60 @@
+<?php $this->layout("layout", ["container" => false, "location" => null]) ?>
+
+<div class="jumbotron">
+	<div class="container">
+		<h1>
+			PHARext
+			<small>PHP extension packaging</small>
+		</h1>
+		<div class="row">
+			<div class="col-md-5 col-md-offset-0">
+				<h2>
+					What?
+				</h2>
+				<p>
+					Distribute your PHP extensions as self-installing PHAR archives.<sup><a id="ref-unix" href="#fn-unix">1</a>)</sup>
+				</p>
+				<p><a href="<?= $baseUrl->mod("./pages/Home") ?>" class="btn btn-primary btn-lg btn-block">
+					Learn more about <em>pharext</em>!
+				</a>
+				</p>
+			</div>
+			<div class="col-md-5 col-md-offset-1">
+				<h2>
+					Services
+				</h2>
+				<p>
+					Manage automatic pharext builds of your PHP extensions.
+				</p>
+				<a href="<?= $baseUrl->mod("./github") ?>" class="btn btn-primary btn-lg btn-block">
+				Start right with your <em>Github</em> repos!
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container">
+	 <script
+		type="text/javascript"
+		src="https://asciinema.org/a/19412.js"
+		id="asciicast-19412"
+		async
+		data-speed="2"
+		data-autoplay="true"
+		data-loop="true"
+	 ></script>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-5">
+			<p>
+				<small><sup><a id="fn-unix" href="#ref-unix">1</a>)</sup>
+					On <a href="http://en.wikipedia.org/wiki/Unix-like">Unix-like</a> operating systems only.
+				</small>
+			</p>
+		</div>
+	</div>
+</div>
+

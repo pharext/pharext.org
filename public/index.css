@@ -1,0 +1,24 @@
+.footer {
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    height: 60px;
+    background-color: #F5F5F5;
+}
+body {
+	margin-bottom: 60px;
+}
+.footer > .container {
+	padding: 15px;
+	text-align: center;
+}
+
+pre {
+	display: inline-block;
+	background-color: #333;
+	color: #ccc;
+}
+
+h4 {
+	margin-top: 20px;
+}

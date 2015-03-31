@@ -1,0 +1,10 @@
+
+<div class="alert alert-danger" role="alert">
+	<strong><?= $this->e($exception->getMessage()) ?></strong><br>
+	<?php if ($exception instanceof \app\Github\Exception\TokenException) : ?>
+		You might want to try to <a href="<?= $baseUrl->mod("./github/signin") ?>">renew your token</a>!
+	<?php endif; ?>
+	<?php if ($exception instanceof \app\Github\Exception\StateException) : ?>
+		You might want to try to <a href="<?= $baseUrl->mod("./github/signin") ?>">try again</a>!
+	<?php endif; ?>
+</div>
