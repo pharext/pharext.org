@@ -17,7 +17,6 @@ class Releases extends Fetch
 				"page" => $this->getPage(),
 			])
 		], 0);
-		echo $url."<br>";
 		return new Request("GET", $url, [
 			"Accept" => "application/vnd.github.v3+json",
 			"Authorization" => "token " . $this->api->getToken(),

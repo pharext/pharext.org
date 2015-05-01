@@ -139,4 +139,9 @@ class API
 		$fetch->setPage($page);
 		return $fetch($callback);
 	}
+	
+	function fetchContents($repo, $path, callable $callback) {
+		$fetch = new Fetch\Contents($this, compact("repo", "path"));
+		return $fetch($callback);
+	}
 }

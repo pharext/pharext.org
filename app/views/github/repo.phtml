@@ -64,7 +64,13 @@
 				<p>Has a <code>config*.m4</code> file?</p>
 			</div>
 			<div class="col-md-4 text-center">
-				<p><span class="label label-info">YES</span></p>
+				<p>
+					<?php if (!empty($repo->config_m4)) : ?>
+					<span class="label label-info">YES</span>
+					<?php else : ?>
+					<span class="label label-warning">NO</span>
+					<?php endif; ?>
+				</p>
 			</div>
 		</div>
 
@@ -73,7 +79,13 @@
 				<p>Has a <code>package*.xml</code> file?</p>
 			</div>
 			<div class="col-md-4 text-center">
-				<p><span class="label label-warning">NO</span></p>
+				<p>
+					<?php if (!empty($repo->package_xml)) : ?>
+					<span class="label label-info">YES</span>
+					<?php else : ?>
+					<span class="label label-warning">NO</span>
+					<?php endif; ?>
+				</p>
 			</div>
 		</div>
 
@@ -82,7 +94,13 @@
 				<p>Has a <code>pharext_package.php</code> file?</p>
 			</div>
 			<div class="col-md-4 text-center">
-				<p><span class="label label-info">YES</span></p>
+				<p>
+					<?php if (!empty($repo->pharext_package_php)) : ?>
+					<span class="label label-info">YES</span>
+					<?php else : ?>
+					<span class="label label-warning">NO</span>
+					<?php endif; ?>
+				</p>
 			</div>
 		</div>
 
@@ -91,7 +109,11 @@
 				<p>Is the <code>pharext</code> hook enabled?</p>
 			</div>
 			<div class="col-md-4 text-center">
-				<p><span class="label label-warning">NO</span></p>
+					<?php if ($this->check($repo)) : ?>
+					<span class="label label-info">YES</span>
+					<?php else : ?>
+					<span class="label label-warning">NO</span>
+					<?php endif; ?>
 			</div>
 		</div>
 	</div>
@@ -99,16 +121,21 @@
 	<div class="col-md-6">
 		<div class="row text-center">
 			<div class="col-md-6">
-				<button class="btn btn-lg btn-block btn-success">Enable Hook</button>
+				<button class="btn btn-lg btn-block btn-success <?= $this->check($repo) ? "disabled":"" ?>">Enable Hook</button>
 			</div>
 			<div class="col-md-6">
-				<button class="btn btn-lg btn-block btn-danger disabled">Disable Hook</button>
+				<button class="btn btn-lg btn-block btn-danger <?= $this->check($repo) ? "":"disabled" ?>">Disable Hook</button>
 			</div>
 		</div>
 	</div>
 </div>
 
 <h2>Release History</h2>
+<?php if (empty($repo->tags) || !count((array) $repo->tags)) : ?>
+<div class="alert alert-warning" role="alert">
+	<p class="text-danger">No releases or tags found.</p>
+</div>
+<?php endif; ?>
 
 <?php foreach ($repo->tags as $name => $v) : ?>
 <div class="panel panel-<?= empty($v->release) ? "info": "primary" ?>">
@@ -150,7 +177,5 @@
 	</div>
 </div>
 <?php endforeach; ?>
-
-<pre><?php var_dump($repo) ?></pre>
 
 <?php endif; ?>
