@@ -37,6 +37,9 @@
 			<?= $this->section("content") ?>
 			
 		</div>
+		<?php if (isset($modal)) : ?>
+			<?= $this->fetch("modal/$modal") ?>
+		<?php endif; ?>
 		<footer class="footer">
 			<div class="container">
 				<p>
@@ -53,7 +56,7 @@
 		</footer>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-		
+		<script>$(".modal").modal("show")</script>
 		<?php if (!empty($scripts)) : ?>
 			<?php foreach ($scripts as $script) : ?>
 				<?php if ($script instanceof \http\Url) : ?>

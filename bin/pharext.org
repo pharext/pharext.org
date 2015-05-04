@@ -1,0 +1,8 @@
+#!/usr/bin/php
+<?php
+
+namespace app;
+
+$bootstrap = require __DIR__."/../app/bootstrap.php";
+$injector = $bootstrap(["config", "github", "cli"]);
+$injector->execute(Cli::class, [$argc, $argv]);

@@ -7,14 +7,22 @@ use app\Controller\Github;
 class Hook extends Github
 {
 	function __invoke(array $args = null) {
-		switch ($args["action"]) {
-			case "add":
-				$this->addHook($args["owner"], $args["name"]);
-				break;
-			
-			case "del":
-				$this->delHook($args["owner"], $args["name"]);
-				break;
+		if ($this->checkToken()) {
+			if ($this->app->getRequest()->getRequestMethod() != "POST") {
+				// user had to re-authenticate, and was redirected here
+				$this->app->redirect($this->app->getBaseUrl()->mod([
+					"path" => "./github/repo/" . $args["owner"] ."/". $args["name"],
+					"query" => "modal=hook&hook=" . $args["action"]
+				]));
+			} else switch ($args["action"]) {
+				case "add":
+					$this->addHook($args["owner"], $args["name"]);
+					break;
+
+				case "del":
+					$this->delHook($args["owner"], $args["name"]);
+					break;
+			}
 		}
 	}
 	

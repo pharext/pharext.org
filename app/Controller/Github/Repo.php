@@ -17,6 +17,13 @@ class Repo extends Github
 			} catch (\app\Github\Exception $exception) {
 				$this->app->getView()->addData(compact("exception", "owner", "name"));
 			}
+			
+			if (($modal = $this->app->getRequest()->getQuery("modal"))) {
+				$this->app->getView()->addData(compact("modal") + [
+					"action" => $this->app->getRequest()->getQuery($modal)
+				]);
+			}
+			
 			$this->app->display("github/repo");
 		}
 	}

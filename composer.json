@@ -13,7 +13,8 @@
 	}],
 	"autoload": {
 		"psr-0": {
-			"app": ""
+			"app": "",
+			"pharext": "vendor/m6w6/pharext/src"
 		}
 	},
 	"require": {

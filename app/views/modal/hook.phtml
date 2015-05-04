@@ -1,0 +1,28 @@
+<div class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Complete Webhook Action</h4>
+      </div>
+      <div class="modal-body">
+        <p>You tried to <?= $action == "del" ? "remove" : "add" ?> the PHARext webhook, 
+			but you had to re-authenticate.</p>
+		<p>Please complete the desired action by submitting this form.</p>
+      </div>
+      <div class="modal-footer">
+		<?php if ($action === "add") : ?>
+		<form method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/hook/add") ?>"> 
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			<button type="submit" class="btn btn-primary">Enable Hook</button>
+		</form>
+		<?php elseif ($action === "del") : ?>
+		<form method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/hook/del") ?>"> 
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			<button type="submit" class="btn btn-primary">Disable Hook</button>
+		</form>
+		<?php endif; ?>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

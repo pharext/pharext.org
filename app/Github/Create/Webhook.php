@@ -20,8 +20,8 @@ class Webhook extends Create
 			"config" => [
 				"url" => $this->config->hook->url,
 				"content_type" => $this->config->hook->content_type,
+				"insecure_ssl" => $this->config->hook->insecure_ssl,
 				"secret" => $this->config->client->secret, // FIXME: bad idea?
-				"insecure_ssl" => false,
 			]
 		]));
 		return $request;

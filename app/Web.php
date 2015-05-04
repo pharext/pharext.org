@@ -2,7 +2,6 @@
 
 namespace app;
 
-use http\Url;
 use http\Env\Request;
 use http\Env\Response;
 
