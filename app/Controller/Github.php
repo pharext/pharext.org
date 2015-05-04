@@ -49,15 +49,20 @@ abstract class Github implements Controller
 		return false;
 	}
 
+	/**
+	 * Check if the pharext webhook is set for the repo and return its id
+	 * @param object $repo
+	 * @return int hook id
+	 */
 	function checkRepoHook($repo) {
 		if ($repo->hooks) {
 			foreach ($repo->hooks as $hook) {
 				if ($hook->name === "web" && $hook->config->url === $this->github->getConfig()->hook->url) {
-					return true;
+					return $hook->id;
 				}
 			}
 		}
-		return false;
+		return null;
 	}
 
 	function createLinkGenerator($links) {

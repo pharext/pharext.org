@@ -119,14 +119,20 @@
 	</div>
 
 	<div class="col-md-6">
+		
 		<div class="row text-center">
 			<div class="col-md-6">
-				<button class="btn btn-lg btn-block btn-success <?= $this->check($repo) ? "disabled":"" ?>">Enable Hook</button>
+				<form method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/hook/add") ?>"> 
+				<button type="submit" class="btn btn-lg btn-block btn-success <?= $this->check($repo) ? "disabled":"" ?>">Enable Hook</button>
+				</form>
 			</div>
 			<div class="col-md-6">
+				<form method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/hook/del") ?>"> 
 				<button class="btn btn-lg btn-block btn-danger <?= $this->check($repo) ? "":"disabled" ?>">Disable Hook</button>
+				</form>
 			</div>
 		</div>
+		</form>
 	</div>
 </div>
 

@@ -17,7 +17,7 @@
 			<th>Repo</th>
 			<th class="text-center">Fork</th>
 			<th class="text-right">Last Pushed</th>
-			<th class="text-right">Hook</th>
+			<th class="text-center">Hook</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -35,13 +35,20 @@
 				<?php endif; ?>
 			</td>
 			<td class="text-right"><time datetime="<?= $this->e($repo->pushed_at) ?>"><?= $this->e($this->utc($repo->pushed_at)->format("Y-m-d H:i T")) ?></time></td>
-			<td class="text-right">
-				<a class="btn btn-primary <?= $this->check($repo) ? "disabled":"" ?>"
-				   href="<?= $baseUrl->mod("./github/repo/".$repo->full_name) ?>">
-					<span class="glyphicon glyphicon-plus" title="Add pharext hook"></span></a>
-				<a class="btn btn-danger <?= !$this->check($repo) ? "disabled":"" ?>"
-				   href="<?= $baseUrl->mod(["path" => "github/repo", "query" => "hook=del&repo=". urlencode($repo->full_name)]) ?>">
-					<span class="glyphicon glyphicon-remove" title="Remove hook"></span></a>
+			<td class="text-center">
+				<form class="form-inline" style="display: inline-block" method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/hook/add") ?>">
+					<input type="hidden" name="returnback" value="1">
+					<button type="submit" class="btn btn-primary <?= $this->check($repo) ? "disabled":"" ?>">
+						<span class="glyphicon glyphicon-plus" title="Add pharext hook"></span>
+					</button>
+				</form>
+				<form class="form-inline" style="display: inline-block" method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/hook/del") ?>"> 
+					<input type="hidden" name="returnback" value="1">
+					<button type="submit" class="btn btn-danger <?= $this->check($repo) ? "":"disabled" ?>">
+						<span class="glyphicon glyphicon-remove" title="Remove hook"></span>
+					</button>
+				</form>
+			</div>
 			</td>
 		</tr>
 		<?php endforeach; ?>

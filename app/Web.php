@@ -20,7 +20,7 @@ class Web
 		$this->baseUrl = $baseUrl;
 		$this->request = $request;
 		$this->response = $response;
-		$this->view = $view;
+		$this->view = $view->addData(["location" => null]);
 		ob_start($response);
 	}
 

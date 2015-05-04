@@ -149,4 +149,14 @@ class API
 		$fetch = new Fetch\Contents($this, compact("repo", "path"));
 		return $fetch($callback);
 	}
+	
+	function createRepoHook($repo, callable $callback) {
+		$create = new Create\Webhook($this, compact("repo"));
+		return $create($callback);
+	}
+	
+	function deleteRepoHook($repo, $id, callable $callback) {
+		$delete = new Delete\Webhook($this, compact("repo", "id"));
+		return $delete($callback);
+	}
 }
