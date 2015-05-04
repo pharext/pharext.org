@@ -22,7 +22,9 @@ class Repo extends Github
 	}
 
 	function repoCallback($repo, $links) {
-		$this->app->getView()->addData(compact("repo"));
+		$this->app->getView()->addData(compact("repo") + [
+			"title" => "Github: {$repo->name}"
+		]);
 		settype($repo->tags, "object");
 		$this->github->fetchHooks($repo->full_name, function($hooks) use($repo) {
 			$repo->hooks = $hooks;

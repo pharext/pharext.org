@@ -5,9 +5,11 @@
     height: 60px;
     background-color: #F5F5F5;
 }
+
 body {
 	margin-bottom: 60px;
 }
+
 .footer > .container {
 	padding: 15px;
 	text-align: center;
@@ -15,7 +17,7 @@ body {
 
 pre {
 	display: inline-block;
-	background-color: #333;
+	background-color: #444;
 	color: #ccc;
 }
 

@@ -27,10 +27,14 @@ abstract class Github implements Controller
 	 */
 	protected $session;
 
-	function __construct(Web $app, API $github) {
+	function __construct(Web $app, API $github, Session $session) {
 		$this->app = $app;
 		$this->github = $github;
-		$this->app->getView()->addData(["location" => "github"]);
+		$this->session = $session;
+		$this->app->getView()->addData(compact("session") + [
+			"location" => "github", 
+			"title" => "Github"
+		]);
 		$this->app->getView()->registerFunction("check", [$this, "checkRepoHook"]);
 	}
 
@@ -43,10 +47,6 @@ abstract class Github implements Controller
 			"query" => new QueryString(["returnto" => $this->session->current])
 		]));
 		return false;
-	}
-
-	function setSession(Session $session) {
-		$this->session = $session;
 	}
 
 	function checkRepoHook($repo) {

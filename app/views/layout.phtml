@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<title>
 			<?php if (!empty($title)) : ?>
-				<?= $this->e($title) ?>
+				<?= $this->e($title) ?> &ndash;
 			<?php endif; ?>
 			PHARext
 		</title>
@@ -12,9 +12,26 @@
 		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 		<link rel="stylesheet" href="<?= $baseUrl->mod("./octicons/octicons.css") ?>">
 		<link rel="stylesheet" href="<?= $baseUrl->mod("./index.css") ?>">
+		
+		<?php if (!empty($styles)) : ?>
+			<?php foreach($styles as $style) : ?>
+				<?php if ($style instanceof \http\Url) : ?>
+		
+				<link rel="stylesheet" href="<?= $style ?>">
+				
+				<?php else : ?>
+				
+				<style><?= $style ?></style>
+				
+				<?php endif; ?>
+			<?php endforeach; ?>
+		<?php endif; ?>
+		
 	</head>
 	<body>
+		
 		<?php include "navbar.phtml" ?>
+		
 		<div id="content" class="<?= (isset($container) && !$container) ? "":"container" ?>">
 			
 			<?= $this->section("content") ?>
@@ -23,7 +40,9 @@
 		<footer class="footer">
 			<div class="container">
 				<p>
-					&copy; 2015 m6w6, Michael Wallner — Powered by <a href="//github.com/m6w6/pharext">pharext
+					&copy; 2015 <abbr title="Michael Wallner">m6w6</abbr> 
+					<addr>&lt;mike&#x40;php&#x2e;net&gt;</addr>
+					&mdash; Powered by <a href="//github.com/m6w6/pharext">pharext
 					<?php
 					include_once __DIR__."/../../vendor/m6w6/pharext/src/pharext/Version.php";
 					echo pharext\VERSION;
@@ -34,5 +53,20 @@
 		</footer>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+		
+		<?php if (!empty($scripts)) : ?>
+			<?php foreach ($scripts as $script) : ?>
+				<?php if ($script instanceof \http\Url) : ?>
+		
+				<script src="<?= $script ?>"></script>
+				
+				<?php else : ?>
+				
+				<script><?= $script ?></script>
+				
+				<?php endif; ?>
+			<?php endforeach; ?>
+		<?php endif; ?>
+		
 	</body>
 </html>

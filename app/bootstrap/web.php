@@ -27,7 +27,9 @@ $injector->share(RouteCollector::class)
 		$routes->addRoute("GET", "/session", function(array $args = null) use($injector) {
 			$session = $injector->make(Session::class);
 			$response = $injector->make(Response::class);
-			$response->setContentType("text/plain");
+			if (!(extension_loaded("xdebug") && ini_get("xdebug.overload_var_dump") && ini_get("html_errors"))) {
+				$response->setContentType("text/plain");
+			}
 			ob_start($response);
 			var_dump($_SESSION, $session);
 		});

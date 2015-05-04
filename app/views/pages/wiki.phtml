@@ -1,7 +1,33 @@
-<?php $this->layout("layout", ["location" => "pages"]) ?>
+<?php 
+	$this->layout("layout", [
+		"location" => "pages",
+	])
+?>
 
 <div class="page-header">
 	<h1><?= $this->e($title) ?></h1>
 </div>
 
-<?= $this->md($page, true) ?>
+<div class="row">
+	<div class="col-md-8">
+		<?= $this->md($page, true) ?>
+	</div>
+	<div class="col-md-4">
+		<ul class="nav nav-stacked nav-pills" style="border-radius: 4px; border: 1px solid #ccc">
+			<li class="bg-primary">
+				<a class="bg-primary" style="background-color: inherit; color: inherit">
+					<span class="glyphicon glyphicon-list"></span>
+					Table Of Contents
+				</a>
+			</li>
+			<?php foreach ($pages as $page) : ?>
+			<li>
+				<a href="<?= $baseUrl->mod("./pages/". rawurlencode($page)) ?>">
+				<?= $this->e($page) ?>
+				</a>
+			</li>
+			<?php endforeach; ?>
+		</ul>
+	</div>
+</div>
+

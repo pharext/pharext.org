@@ -111,6 +111,11 @@ class API
 		$fetch = new Fetch\Token($this, compact("code") + $this->config->client->toArray());
 		return $fetch($callback);
 	}
+	
+	function fetchUser(callable $callback) {
+		$fetch = new Fetch\User($this);
+		return $fetch($callback);
+	}
 
 	function fetchRepos($page, callable $callback) {
 		$fetch = new Fetch\Repos($this);

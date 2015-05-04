@@ -19,6 +19,17 @@ class Wikipage implements Controller
 
 	function __invoke(array $args = null) {
 		$title = $args["page"];
+		$this->app->getView()->addData(["title" => "About: $title"]);
+		if ($title === "Packager hook") {
+			$baseUrl = $this->app->getBaseUrl();
+			$this->app->getView()->addData([
+				"styles" => [$baseUrl->mod("./highlight/styles/dark.css")],
+				"scripts" => [
+					$baseUrl->mod("./highlight/highlight.pack.js"),
+					"hljs.initHighlightingOnLoad();"
+				]
+			]);
+		}
 		$page = $this->wikiPath($args["page"]);
 		$this->app->display("pages/wiki", compact("title", "page"));
 	}
@@ -30,6 +41,7 @@ class Wikipage implements Controller
 				return $s{0} !== ".";
 			});
 	}
+	
 	function wikiPath($page) {
 		$file = basename(strtr($page, " ", "-"), ".md") . ".md";
 		return self::WIKI_PATH . $file;

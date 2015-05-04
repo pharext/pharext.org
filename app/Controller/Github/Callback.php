@@ -18,6 +18,9 @@ class Callback extends Github
 					$this->app->getRequest()->getQuery("state"),
 					function($json) {
 						$this->github->setToken($json->access_token);
+						$this->github->fetchUser(function($user) {
+							$this->session->github = $user;
+						});
 				})->send();
 				if (isset($this->session->returnto)) {
 					$this->app->redirect($this->session->returnto);
