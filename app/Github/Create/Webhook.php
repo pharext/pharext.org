@@ -15,6 +15,7 @@ class Webhook extends Create
 			"Content-Type" => "application/json",
 			"Authorization" => "token " . $this->api->getToken(),
 		]);
+		
 		$request->getBody()->append(json_encode([
 			"name" => "web",
 			"config" => [
