@@ -29,28 +29,36 @@ class Web
 
 		switch ($route[0]) {
 			case Dispatcher::NOT_FOUND:
-				$this->response->setResponseCode(404);
-				$this->response->getBody()->append($this->view->render("404"));
+				$this->display(404, null, 404);
 				break;
 
 			case Dispatcher::METHOD_NOT_ALLOWED:
-				$this->response->setResponseCode(405);
-				$this->response->setHeader("Allowed", $route[1]);
-				$this->response->getBody()->append($this->view->render("405"));
+				$this->display(405, null, 405, ["Allowed" => $route[1]]);
 				break;
 
 			case Dispatcher::FOUND:
 				list(, $handler, $args) = $route;
-				$handler(array_map("urldecode", $args));
+				try {
+					$handler(array_map("urldecode", $args));
+				} catch (\Exception $exception) {
+					self::cleanBuffers();
+					$this->display(500, compact("exception"), 500, ["X-Exception", get_class($exception)]);
+				}
 				break;
 		}
 
 		$this->response->send();
 	}
 
-	function display($view, array $data = []) {
+	function display($view, array $data = null, $code = null, array $headers = []) {
+		if (isset($code)) {
+			$this->response->setResponseCode($code);
+		}
+		if ($headers) {
+			$this->response->addHeaders($headers);
+		}
 		$this->response->getBody()->append(
-			$this->view->render($view, $data));
+			$this->view->render($view, (array) $data));
 	}
 
 	function redirect($url, $code = 302) {
@@ -72,5 +80,13 @@ class Web
 
 	function getResponse() {
 		return $this->response;
+	}
+	
+	static function cleanBuffers() {
+		while (ob_get_level()) {
+			if (!@ob_end_clean()) {
+				break;
+			}
+		}
 	}
 }

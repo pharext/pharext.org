@@ -1,5 +1,8 @@
 <?php $this->layout("layout") ?>
 
 <div class="page-header">
-	<h1>405 <small>Method Not Allowed</small>
+	<h1>Method Not Allowed <small>405</small>
 </div>
+<p>
+	Request method <?= $this->e($request->getRequestMethod()) ?> is not allowed.
+</p>

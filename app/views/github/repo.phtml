@@ -181,7 +181,7 @@
 				<?= $this->e($v->tag->name) ?>
 				<span class="label label-default pull-right">Tag</span>
 			<?php else : ?>
-				<?= $this->e($v->release->name) ?>
+				<?= $this->e($v->release->name ?: $v->tag->name) ?>
 				<span class="label label-info pull-right">Release</span>
 			<?php endif; ?>
 		</h3>
