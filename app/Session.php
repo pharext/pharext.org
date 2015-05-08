@@ -3,14 +3,25 @@
 namespace app;
 
 use ArrayAccess;
-use merry\Config;
+use http\Env\Response;
+use http\Params;
 
 class Session implements ArrayAccess
 {
-	function __construct(Config $config) {
+	function __construct(Config $config, Response $response) {
 		foreach ($config->session as $key => $val) {
 			ini_set("session.$key", $val);
 		}
+		if (ini_get("session.use_cookies")) {
+			$response->addHeader("Vary", "cookie");
+		}
+		$response->addHeader("Cache-Control",
+			new Params([
+				"private" => true,
+				"must-revalidate" => true,
+				"max-age" => ini_get("session.cache_expire") * 60
+			])
+		);
 		session_start();
 	}
 

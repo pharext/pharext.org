@@ -26,7 +26,7 @@ abstract class Github implements Controller
 	 * @var \app\Session
 	 */
 	protected $session;
-
+	
 	function __construct(Web $app, API $github, Session $session) {
 		$this->app = $app;
 		$this->github = $github;

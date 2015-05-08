@@ -2,22 +2,26 @@
 
 namespace app;
 
-use merry\Config;
 use pharext\Cli\Args;
 
 class Cli
 {
 	/**
-	 * @var \merry\Config
+	 * @var \app\Config
 	 */
 	private $config;
+	
+	/**
+	 * @var \pharext\Cli\Args
+	 */
+	private $args;
 	
 	function __construct(Config $config, Args $args) {
 		$this->config = $config;
 		$this->args = $args;
 	}
 	
-	function __invoke($argc, array $argv) {
+	function __invoke($argc, array $argv, callable $exec) {
 		$prog = array_shift($argv);
 		foreach ($this->args->parse(--$argc, $argv) as $error) {
 			$errs[] = $error;
@@ -35,15 +39,13 @@ class Cli
 		}
 		
 		if ($this->args["ngrok"]) {
-			system($this->config->ngrok->command . " ". implode(" ", array_map("escapeshellarg", [
-				"http",
-				"--subdomain=pharext",
-				"--authtoken",
-				$this->config->ngrok->auth->token,
-				"--auth",
-				$this->config->ngrok->auth->user .":". $this->config->ngrok->auth->pass,
-				"80"
-			])));
+			$exec(Cli\Ngrok::class);
+		}
+		if ($this->args["initdb"]) {
+			$exec(Cli\Initdb::class);
+		}
+		if ($this->args["gen-models"]) {
+			$exec(Cli\GenModels::class);
 		}
 	}
 	

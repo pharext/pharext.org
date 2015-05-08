@@ -4,7 +4,6 @@ namespace app;
 
 require_once __DIR__."/config.php";
 
-use merry\Config;
 use http\Url;
 
 $injector->share(Github\API::class)

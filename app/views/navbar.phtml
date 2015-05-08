@@ -47,13 +47,13 @@
 				<ul class="nav navbar-nav navbar-right">
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-							<img src="<?= $session->github->avatar_url ?>" 
+							<img src="<?= $session->github->owner["avatar_url"] ?>" 
 							 class="img-circle"
 							 alt="avatar"
 							 width="32"
 							 style="margin:-15px 0px">
-							<abbr title="<?= $this->e($session->github->name) ?>">
-								<?= $this->e($session->github->login) ?>
+							<abbr title="<?= $this->e($session->github->owner["name"]) ?>">
+								<?= $this->e($session->github->owner["login"]) ?>
 							</abbr>
 							<span class="caret"></span>
 						</a>

@@ -15,6 +15,10 @@ class Hook extends Github
 					"query" => "modal=hook&hook=" . $args["action"]
 				]));
 			} else switch ($args["action"]) {
+				case "upd":
+					$this->updateHook($args["owner"], $args["name"]);
+					break;
+				
 				case "add":
 					$this->addHook($args["owner"], $args["name"]);
 					break;
@@ -27,7 +31,8 @@ class Hook extends Github
 	}
 	
 	function addHook($owner, $repo) {
-		$this->github->createRepoHook("$owner/$repo", function($hook) use($owner, $repo) {
+		$hook_conf = $this->app->getRequest()->getForm();
+		$this->github->createRepoHook("$owner/$repo", $hook_conf, function($hook) use($owner, $repo) {
 			if (($cache = $this->github->getCacheStorage())) {
 				$cache->del($this->github->getCacheKey("hooks:$owner/$repo"));
 			}

@@ -16,8 +16,16 @@ class Webhook extends Create
 			"Authorization" => "token " . $this->api->getToken(),
 		]);
 		
+		if (!empty($this->args["conf"]["tag"])) {
+			$events[] = "create";
+		}
+		if (!empty($this->args["conf"]["release"])) {
+			$events[] = "release";
+		}
+		
 		$request->getBody()->append(json_encode([
 			"name" => "web",
+			"events" => $events,
 			"config" => [
 				"url" => $this->config->hook->url,
 				"content_type" => $this->config->hook->content_type,

@@ -119,20 +119,50 @@
 	</div>
 
 	<div class="col-md-6">
-		
-		<div class="row text-center">
-			<div class="col-md-6">
-				<form method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/hook/add") ?>"> 
-				<button type="submit" class="btn btn-lg btn-block btn-success <?= $this->check($repo) ? "disabled":"" ?>">Enable Hook</button>
-				</form>
-			</div>
+		<div class="row">
+			<form method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/hook/" . ($this->check($repo) ? "upd" : "add")) ?>">
+				<div class="col-md-12">
+						<div class="checkbox">
+							<label for="hook-tag">
+								<input id="hook-tag" type="checkbox" name="tag" value="1">
+								Automatically create a release when I push a tag.
+							</label>
+						</div>
+						<div class="checkbox">
+							<label for="hook-release">
+								<input id="hook-release" type="checkbox" name="release" value="1">
+								Automatically upload a PHARext package as an asset to a release.
+							</label>
+						</div>
+				</div>
+				<?php if ($this->check($repo)) : ?>
+				<div class="col-md-6">
+					<button type="submit" class="btn btn-lg btn-block btn-info">
+						<span class="glyphicon glyphicon-ok-circle"></span>
+						Update Hook
+					</button>
+				</div>
+				<?php else : ?>
+				<div class="col-md-12">
+					<button type="submit" class="btn btn-lg btn-block btn-success">
+						<span class="octicon octicon-plug"></span>
+						Enable Hook
+					</button>
+				</div>
+				<?php endif; ?>
+			</form>
+			<!-- column wrapping! -->
+			<?php if ($this->check($repo)) : ?>
 			<div class="col-md-6">
 				<form method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/hook/del") ?>"> 
-				<button class="btn btn-lg btn-block btn-danger <?= $this->check($repo) ? "":"disabled" ?>">Disable Hook</button>
+				<button class="btn btn-lg btn-block btn-danger">
+					<span class="glyphicon glyphicon-remove-circle"></span>
+					Remove Hook
+				</button>
 				</form>
 			</div>
+			<?php endif; ?>
 		</div>
-		</form>
 	</div>
 </div>
 

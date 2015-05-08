@@ -150,13 +150,28 @@ class API
 		return $fetch($callback);
 	}
 	
-	function createRepoHook($repo, callable $callback) {
-		$create = new Create\Webhook($this, compact("repo"));
+	function createRepoHook($repo, $conf, callable $callback) {
+		$create = new Create\Webhook($this, compact("repo", "conf"));
 		return $create($callback);
+	}
+	
+	function updateRepoHook($repo, $id, $conf, callable $callback) {
+		$update = new Update\Webhook($this, compact("repo", "id", "conf"));
+		return $update($callback);
 	}
 	
 	function deleteRepoHook($repo, $id, callable $callback) {
 		$delete = new Delete\Webhook($this, compact("repo", "id"));
 		return $delete($callback);
+	}
+	
+	function createRelease($repo, $tag, callable $callback) {
+		$create = new Create\Release($this, compact("repo", "tag"));
+		return $create($callback);
+	}
+	
+	function createReleaseAsset($url, $asset, $type, callable $callback) {
+		$create = new Create\ReleaseAsset($this, compact("url", "asset", "type"));
+		return $create($callback);
 	}
 }

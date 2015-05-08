@@ -10,8 +10,6 @@ use League\Plates;
 use http\Env\Request;
 use http\Env\Response;
 
-use merry\Config;
-
 $injector->share(Plates\Engine::class)
 	->define(Plates\Engine::class, [
 		":directory" => __DIR__."/../views",

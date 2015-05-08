@@ -10,7 +10,7 @@ class Signin extends Github
 		$callback = $this->app->getBaseUrl()->mod("./github/callback");
 		$location = $this->github->getAuthUrl($callback);
 		$this->app->redirect($location);
-		if ($returnto = $this->app->getRequest()->getQuery("returnto")) {
+		if (($returnto = $this->app->getRequest()->getQuery("returnto"))) {
 			$this->session->returnto = $returnto;
 		}
 	}

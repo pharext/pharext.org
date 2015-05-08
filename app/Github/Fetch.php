@@ -39,7 +39,6 @@ abstract class Fetch
 		$this->args = $args;
 		$this->url = new Url("https://api.github.com/", null, 0);
 		if (isset($this->config->fetch->{$this}->per_page)) {
-			header("X-Fetch-{$this}: ".$this->config->fetch->{$this}->per_page, false);
 			$this->url->query = "per_page=" . $this->config->fetch->{$this}->per_page;
 		}
 	}

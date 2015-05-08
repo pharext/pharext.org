@@ -4,5 +4,7 @@
 namespace app;
 
 $bootstrap = require __DIR__."/../app/bootstrap.php";
-$injector = $bootstrap(["config", "github", "cli"]);
-$injector->execute(Cli::class, [$argc, $argv]);
+$injector = $bootstrap(["config", "github", "pq", "cli"]);
+$injector->execute(Cli::class, [$argc, $argv, function($command, array $args = []) use($injector) {
+	$injector->execute($injector->make($command), $args);
+}]);

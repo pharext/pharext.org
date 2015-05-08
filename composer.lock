@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c13d01568dea02e2afe4b9060478178f",
+    "hash": "a2c6e7fb3b26571277d242842331c3cb",
     "packages": [
         {
             "name": "league/plates",
@@ -100,16 +100,16 @@
         },
         {
             "name": "m6w6/pharext",
-            "version": "v3.0.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/m6w6/pharext.git",
-                "reference": "3dcc326aa922ce4b70d07049572c6f15a744869c"
+                "reference": "e458434f1a5539f1905e61835bed0123f1635067"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/m6w6/pharext/zipball/3dcc326aa922ce4b70d07049572c6f15a744869c",
-                "reference": "3dcc326aa922ce4b70d07049572c6f15a744869c",
+                "url": "https://api.github.com/repos/m6w6/pharext/zipball/e458434f1a5539f1905e61835bed0123f1635067",
+                "reference": "e458434f1a5539f1905e61835bed0123f1635067",
                 "shasum": ""
             },
             "bin": [
@@ -129,7 +129,7 @@
                 "package",
                 "phar"
             ],
-            "time": "2015-04-08 10:17:40"
+            "time": "2015-05-08 08:54:09"
         },
         {
             "name": "m6w6/pharext.wiki",
@@ -141,6 +141,51 @@
             },
             "type": "library",
             "time": "2015-04-30 17:39:40"
+        },
+        {
+            "name": "m6w6/pq-gateway",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/m6w6/pq-gateway.git",
+                "reference": "19590cfee428909a9ad2195b02a30ae176980992"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/m6w6/pq-gateway/zipball/19590cfee428909a9ad2195b02a30ae176980992",
+                "reference": "19590cfee428909a9ad2195b02a30ae176980992",
+                "shasum": ""
+            },
+            "suggest": {
+                "react/promise": "1.0.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "pq\\Gateway": "lib",
+                    "pq\\Query": "lib"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Wallner",
+                    "email": "mike@php.net"
+                }
+            ],
+            "description": "Table/row gateway for ext-pq",
+            "homepage": "http://github.com/m6w6/pq-gateway",
+            "keywords": [
+                "gateway",
+                "orm",
+                "postgres",
+                "postgresql",
+                "pq"
+            ],
+            "time": "2014-10-15 15:30:26"
         },
         {
             "name": "nikic/fast-route",
@@ -191,12 +236,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/rdlowrey/Auryn.git",
-                "reference": "500b08ec9942eb8b647b128fa13942d45754e3d4"
+                "reference": "2e03bf93ddcd855e962d314cce74ce2a01a49228"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rdlowrey/Auryn/zipball/500b08ec9942eb8b647b128fa13942d45754e3d4",
-                "reference": "500b08ec9942eb8b647b128fa13942d45754e3d4",
+                "url": "https://api.github.com/repos/rdlowrey/Auryn/zipball/be3807b62a6991e61151b55b6974dc1289afabd5",
+                "reference": "2e03bf93ddcd855e962d314cce74ce2a01a49228",
                 "shasum": ""
             },
             "require": {
@@ -238,13 +283,14 @@
                 "dic",
                 "ioc"
             ],
-            "time": "2015-03-12 19:52:27"
+            "time": "2015-05-01 14:20:14"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "m6w6/pharext": 20,
         "rdlowrey/auryn": 20,
         "m6w6/pharext.wiki": 20
     },
