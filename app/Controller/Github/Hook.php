@@ -80,7 +80,10 @@ class Hook implements Controller
 	private function uploadAssetForRelease($release, $repo) {
 		$this->setTokenForUser($repo->owner->login);
 		$asset = $this->createReleaseAsset($release, $repo);
-		$this->github->createReleaseAsset($release->upload_url, $asset, "application/phar", function($json) {
+		// FIXME: use uri_template extension
+		$name = sprintf("%s-%s.ext.phar", $repo->name, $release->tag_name);
+		$url = str_replace("{?name}", "?name=$name", $release->upload_url);
+		$this->github->createReleaseAsset($url, $asset, "application/phar", function($json) {
 			$response = $this->app->getResponse();
 			$response->setResponseCode(201);
 			$response->setHeader("Location", $json->url);
