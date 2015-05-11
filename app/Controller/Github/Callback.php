@@ -28,24 +28,20 @@ class Callback extends Github
 				"error" => $this->app->getRequest()->getQuery("error_description")
 			]);
 		} else {
-			try {
-				$this->github->fetchToken(
-					$this->app->getRequest()->getQuery("code"),
-					$this->app->getRequest()->getQuery("state"),
-					function($token) {
-						$this->github->setToken($token->access_token);
-						$this->github->fetchUser($this->createUserCallback($token));
-				})->send();
-				if (isset($this->session->returnto)) {
-					$returnto = $this->session->returnto;
-					unset($this->session->returnto);
-					$this->app->redirect($returnto);
-				} else {
-					$this->app->redirect(
-						$this->app->getBaseUrl()->mod("./github"));
-				}
-			} catch (Exception $exception) {
-				$this->app->getView()->addData(compact("exception"));
+			$this->github->fetchToken(
+				$this->app->getRequest()->getQuery("code"),
+				$this->app->getRequest()->getQuery("state"),
+				function($token) {
+					$this->github->setToken($token->access_token);
+					$this->github->fetchUser($this->createUserCallback($token));
+			})->send();
+			if (isset($this->session->returnto)) {
+				$returnto = $this->session->returnto;
+				unset($this->session->returnto);
+				$this->app->redirect($returnto);
+			} else {
+				$this->app->redirect(
+					$this->app->getBaseUrl()->mod("./github"));
 			}
 		}
 		$this->app->display("github/callback");

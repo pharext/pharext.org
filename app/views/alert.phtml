@@ -1,6 +1,7 @@
 
 <div class="alert alert-danger" role="alert">
-	<strong><?= nl2br($this->e($exception->getMessage())) ?></strong><br>
+	<strong><?= nl2br($this->e($exception->getMessage())) ?></strong>
+	(<?= $exception->getCode() ?>)<br>
 	<?php if ($exception instanceof \app\Github\Exception\TokenException) : ?>
 		You might want to try to <a href="<?= $baseUrl->mod("./github/signin") ?>">renew your token</a>!
 	<?php endif; ?>
@@ -12,4 +13,6 @@
 <?php if (APP_ENVIRONMENT != "production") : ?>
 <h3>Stack Trace</h3>
 <pre><?= $this->e($exception->getTraceAsString()) ?></pre>
+<h3>Full Dump</h3>
+<pre><?= $this->e($exception) ?></pre>
 <?php endif; ?>

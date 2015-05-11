@@ -1,19 +1,19 @@
 <?php
 
-namespace app\Github\Create;
+namespace app\Github\API\Hooks;
 
-use app\Github\Create;
-use app\Github\Exception\WebhookCreateFailed;
+use app\Github\API\Call;
+use app\Github\Exception\RequestException;
 use http\Client\Request;
 
-class Webhook extends Create
+class CreateHook extends Call
 {
-	function getRequest() {
+	function enqueue(callable $callback) {
 		$url = $this->url->mod("./repos/". $this->args["repo"] ."/hooks");
 		$request = new Request("POST", $url, [
-			"Accept" => "application/vnd.github.v3+json",
-			"Content-Type" => "application/json",
 			"Authorization" => "token " . $this->api->getToken(),
+			"Accept" => $this->config->api->accept,
+			"Content-Type" => "application/json",
 		]);
 		
 		if (!empty($this->args["conf"]["tag"])) {
@@ -33,10 +33,13 @@ class Webhook extends Create
 				"secret" => $this->config->client->secret, // FIXME: bad idea?
 			]
 		]));
-		return $request;
-	}
-	
-	function getException($message, $code, $previous = null) {
-		return new WebhookCreateFailed($message, $code, $previous);
+		
+		$this->api->getClient()->enqueue($request, function($response) use($callback) {
+			if ($response->getReesponseCode() != 400 || null === ($json = json_decode($response->getBody()))) {
+				throw new RequestException($response);
+			}
+			$callback($json);
+			return true;
+		});
 	}
 }

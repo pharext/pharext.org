@@ -7,10 +7,6 @@
 	</h1>
 </div>
 
-<?php if (isset($exception)) : ?>
-	<?= $this->fetch("alert") ?>
-<?php elseif (isset($repos)) : ?>
-
 <table class="table table-hover">
 	<thead>
 		<tr>
@@ -57,16 +53,9 @@
 
 <nav>
 	<ul class="pager">
-		<?php
-		$first= $this->link("first");
-		$prev = $this->link("prev");
-		$next = $this->link("next");
-		$last = $this->link("last");
-		?>
-		<li class="<?= $first ?"":"disabled" ?>"><a href="?page=<?= $first ?>" title="First Page"><span class="glyphicon glyphicon-fast-backward"></span></a></li>
-		<li class="<?= $prev ?"":"disabled" ?>"><a href="?page=<?= $prev ?>" rel="prev" title="Previous Page"><span class="glyphicon glyphicon-chevron-left"></span> Previous</a></li>
-		<li class="<?= $next ?"":"disabled" ?>"><a href="?page=<?= $next ?>" rel="next" title="Next Page">Next <span class="glyphicon glyphicon-chevron-right"></span></a></li>
-		<li class="<?= $last ?"":"disabled" ?>"><a href="?page=<?= $last ?>" title="Last Page"><span class="glyphicon glyphicon-fast-forward"></span></a></li>
+		<li class="<?= $links->getFirst() ?"":"disabled" ?>"><a href="?page=<?= $links->getPage("first") ?>" title="First Page"><span class="glyphicon glyphicon-fast-backward"></span></a></li>
+		<li class="<?= $links->getPrev() ?"":"disabled" ?>"><a href="?page=<?= $links->getPage("prev") ?>" rel="prev" title="Previous Page"><span class="glyphicon glyphicon-chevron-left"></span> Previous</a></li>
+		<li class="<?= $links->getNext() ?"":"disabled" ?>"><a href="?page=<?= $links->getPage("next") ?>" rel="next" title="Next Page">Next <span class="glyphicon glyphicon-chevron-right"></span></a></li>
+		<li class="<?= $links->getLast() ?"":"disabled" ?>"><a href="?page=<?= $links->getPage("last") ?>" title="Last Page"><span class="glyphicon glyphicon-fast-forward"></span></a></li>
 	</ul>
 </nav>
-<?php endif; ?>

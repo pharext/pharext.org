@@ -8,15 +8,12 @@ class Repo extends Github
 {
 	function __invoke(array $args = null) {
 		extract($args);
+		$this->app->getView()->addData(compact("owner", "name"));
 		if ($this->checkToken()) {
-			try {
-				$this->github->fetchRepo(
-					"$owner/$name",
-					[$this, "repoCallback"]
-				)->send();
-			} catch (\app\Github\Exception $exception) {
-				$this->app->getView()->addData(compact("exception", "owner", "name"));
-			}
+			$this->github->fetchRepo(
+				"$owner/$name",
+				[$this, "repoCallback"]
+			)->send();
 			
 			if (($modal = $this->app->getRequest()->getQuery("modal"))) {
 				$this->app->getView()->addData(compact("modal") + [
@@ -28,7 +25,7 @@ class Repo extends Github
 		}
 	}
 
-	function repoCallback($repo, $links) {
+	function repoCallback($repo) {
 		$this->app->getView()->addData(compact("repo") + [
 			"title" => "Github: {$repo->name}"
 		]);

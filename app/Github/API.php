@@ -2,6 +2,7 @@
 
 namespace app\Github;
 
+use app\Github\API;
 use app\Github\Storage;
 use app\Github\Exception;
 
@@ -107,71 +108,72 @@ class API
 		if ($state !== $orig_state) {
 			throw new Exception\StateMismatch($orig_state, $state);
 		}
-
-		$fetch = new Fetch\Token($this, compact("code") + $this->config->client->toArray());
-		return $fetch($callback);
+		
+		$call = new API\Users\ReadAuthToken($this, [
+			"code" => $code,
+			"client_id" => $this->config->client->id,
+			"client_secret" => $this->config->client->secret,
+		]);
+		return $call($callback);
 	}
 	
 	function fetchUser(callable $callback) {
-		$fetch = new Fetch\User($this);
-		return $fetch($callback);
+		$call = new API\Users\ReadAuthUser($this);
+		return $call($callback);
 	}
 
 	function fetchRepos($page, callable $callback) {
-		$fetch = new Fetch\Repos($this);
-		$fetch->setPage($page);
-		return $fetch($callback);
+		$call = new API\Repos\ListRepos($this, compact("page"));
+		return $call($callback);
 	}
 
 	function fetchRepo($repo, callable $callback) {
-		$fetch = new Fetch\Repo($this, compact("repo"));
-		return $fetch($callback);
+		$call = new API\Repos\ReadRepo($this, compact("repo"));
+		return $call($callback);
 	}
 
 	function fetchHooks($repo, callable $callback) {
-		$fetch = new Fetch\Hooks($this, compact("repo"));
-		return $fetch($callback);
+		$call = new API\Hooks\ListHooks($this, compact("repo"));
+		return $call($callback);
 	}
 
 	function fetchReleases($repo, $page, callable $callback) {
-		$fetch = new Fetch\Releases($this, compact("repo"));
-		$fetch->setPage($page);
-		return $fetch($callback);
+		$call = new API\Releases\ListReleases($this, compact("repo", "page"));
+		return $call($callback);
 	}
 
 	function fetchTags($repo, $page, callable $callback) {
-		$fetch = new Fetch\Tags($this, compact("repo"));
-		$fetch->setPage($page);
-		return $fetch($callback);
+		$call = new API\Tags\ListTags($this, compact("repo", "page"));
+		return $call($callback);
 	}
 	
 	function fetchContents($repo, $path, callable $callback) {
-		$fetch = new Fetch\Contents($this, compact("repo", "path"));
-		return $fetch($callback);
+		$call = new API\Repos\ReadContents($this, compact("repo", "path"));
+		return $call($callback);
 	}
 	
 	function createRepoHook($repo, $conf, callable $callback) {
-		$create = new Create\Webhook($this, compact("repo", "conf"));
-		return $create($callback);
+		$call = new API\Hooks\CreateHook($this, compact("repo", "conf"));
+		return $call($callback);
 	}
 	
 	function updateRepoHook($repo, $id, $conf, callable $callback) {
-		$update = new Update\Webhook($this, compact("repo", "id", "conf"));
-		return $update($callback);
+		$call = new API\Hooks\UpdateHook($this, compact("repo", "id", "conf"));
+		return $call($callback);
 	}
 	
 	function deleteRepoHook($repo, $id, callable $callback) {
-		$delete = new Delete\Webhook($this, compact("repo", "id"));
-		return $delete($callback);
+		$call = new API\Hooks\DeleteHook($this, compact("repo", "id"));
+		return $call($callback);
 	}
 	
 	function createRelease($repo, $tag, callable $callback) {
-		$create = new Create\Release($this, compact("repo", "tag"));
-		return $create($callback);
+		$call = new API\Releases\CreateRelease($this, compact("repo", "tag"));
+		return $call($callback);
 	}
 	
 	function createReleaseAsset($url, $asset, $type, callable $callback) {
-		$create = new Create\ReleaseAsset($this, compact("url", "asset", "type"));
-		return $create($callback);
+		$call = new API\Releases\CreateReleaseAsset($this, compact("url", "asset", "type"));
+		return $call($callback);
 	}
 }
