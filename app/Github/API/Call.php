@@ -67,7 +67,7 @@ abstract class Call
 		}
 		
 		$this->enqueue($callback);
-		return $this->api->getClient();
+		return $this;
 	}
 	
 	/**
@@ -77,6 +77,13 @@ abstract class Call
 	function __toString() {
 		$parts = explode("\\", get_class($this));
 		return strtolower(end($parts));
+	}
+	
+	/**
+	 * Call Client::send()
+	 */
+	function send() {
+		return $this->api->getClient()->send();
 	}
 	
 	/**
@@ -92,8 +99,11 @@ abstract class Call
 	}
 	
 	function getCacheKey() {
+		$args = $this->args;
+		unset($args["fresh"]);
+		ksort($args);
 		return sprintf("github:%s:%s:%s", $this->api->getToken(), $this, 
-			new QueryString($this->args));
+			new QueryString($args));
 	}
 
 	function readFromCache(array &$cached = null, &$ttl = null) {
@@ -114,6 +124,13 @@ abstract class Call
 			
 			$key = $this->getCacheKey();
 			$cache->set($key, $fresh, $ttl);
+		}
+	}
+	
+	function dropFromCache() {
+		if (($cache = $this->api->getCacheStorage())) {
+			$key = $this->getCacheKey();
+			$cache->del($key);
 		}
 	}
 }

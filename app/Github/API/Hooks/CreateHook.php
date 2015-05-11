@@ -15,7 +15,8 @@ class CreateHook extends Call
 			"Accept" => $this->config->api->accept,
 			"Content-Type" => "application/json",
 		]);
-		
+
+		$events = [];
 		if (!empty($this->args["conf"]["tag"])) {
 			$events[] = "create";
 		}
@@ -35,7 +36,7 @@ class CreateHook extends Call
 		]));
 		
 		$this->api->getClient()->enqueue($request, function($response) use($callback) {
-			if ($response->getReesponseCode() != 400 || null === ($json = json_decode($response->getBody()))) {
+			if ($response->getResponseCode() >= 400 || null === ($json = json_decode($response->getBody()))) {
 				throw new RequestException($response);
 			}
 			$callback($json);

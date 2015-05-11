@@ -34,35 +34,50 @@ class RepoHook extends Github
 	
 	function addHook($owner, $repo) {
 		$hook_conf = $this->app->getRequest()->getForm();
-		$this->github->createRepoHook("$owner/$repo", $hook_conf, function($hook) use($owner, $repo) {
-			if (($cache = $this->github->getCacheStorage())) {
-				$cache->del($this->github->getCacheKey("hooks:$owner/$repo"));
-			}
-			if (($back = $this->app->getRequest()->getForm("returnback")) && isset($this->session->previous)) {
-				$this->app->redirect($this->app->getBaseUrl()->mod($this->session->previous));
-			} else {
-				$this->app->redirect($this->app->getBaseUrl()->mod("./github/repo/$owner/$repo"));
-			}
+		$call = $this->github->createRepoHook("$owner/$repo", $hook_conf, function($hook) use($owner, $repo, &$call) {
+			$call->dropFromCache();
+			$this->redirectBack("$owner/$repo");
+		});
+		$call->send();
+	}
+	
+	function updateHook($owner, $repo) {
+		$this->github->fetchRepo("$owner/$repo", function($repo) {
+			$call = $this->github->fetchHooks($repo->full_name, function($hooks, $links) use($repo, &$call) {
+				$repo->hooks = $hooks;
+				if (($hook = $this->checkRepoHook($repo))) {
+					$hook_conf = $this->app->getRequest()->getForm();
+					$this->github->updateRepoHook($repo->full_name, $hook->id, $hook_conf, function($changed_hook) use($repo, $hook, $hooks, $links, $call) {
+						foreach ($changed_hook as $key => $val) {
+							$hook->$key = $val;
+						}
+						$call->saveToCache([$hooks, $links]);
+						$this->redirectBack($repo->full_name);
+					});
+				}
+			});
 		})->send();
 	}
 	
 	function delHook($owner, $repo) {
 		$this->github->fetchRepo("$owner/$repo", function($repo) {
-			$this->github->fetchHooks($repo->full_name, function($hooks) use($repo) {
+			$call = $this->github->fetchHooks($repo->full_name, function($hooks) use($repo, &$call) {
 				$repo->hooks = $hooks;
 				if (($hook = $this->checkRepoHook($repo))) {
-					$this->github->deleteRepoHook($repo->full_name, $hook->id, function() use($repo) {
-						if (($cache = $this->github->getCacheStorage())) {
-							$cache->del($this->github->getCacheKey("hooks:" . $repo->full_name));
-						}
-						if (($back = $this->app->getRequest()->getForm("returnback")) && isset($this->session->previous)) {
-							$this->app->redirect($this->app->getBaseUrl()->mod($this->session->previous));
-						} else {
-							$this->app->redirect($this->app->getBaseUrl()->mod("./github/repo/" . $repo->full_name));
-						}
+					$this->github->deleteRepoHook($repo->full_name, $hook->id, function() use($repo, $call) {
+						$call->dropFromCache();
+						$this->redirectBack($repo->full_name);
 					});
 				}
 			});
 		})->send();
+	}
+	
+	function redirectBack($repo) {
+		if (($back = $this->app->getRequest()->getForm("returnback")) && isset($this->session->previous)) {
+			$this->app->redirect($this->app->getBaseUrl()->mod($this->session->previous));
+		} else {
+			$this->app->redirect($this->app->getBaseUrl()->mod("./github/repo/" . $repo));
+		}
 	}
 }
