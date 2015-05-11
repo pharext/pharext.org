@@ -57,16 +57,13 @@ abstract class Call
 	}
 	
 	function __invoke(callable $callback) {
-		if (empty($this->args["fresh"]) && ($cache = $this->api->getCacheStorage())) {
-			$key = $this->getCacheKey();
-			
-			if ($cache->get($key, $cached)) {
-				call_user_func_array($callback, $cached);
-				return $this->api->getClient();
-			}
+		if ($this->readFromCache($cached)) {
+			header("X-Cache-Hit: $this", false);
+			call_user_func_array($callback, $cached);
+		} else {
+			header("X-Cache-Miss: $this", false);
+			$this->enqueue($callback);
 		}
-		
-		$this->enqueue($callback);
 		return $this;
 	}
 	
@@ -119,7 +116,7 @@ abstract class Call
 			if (isset($this->config->storage->cache->{$this}->ttl)) {
 				$ttl = $this->config->storage->cache->{$this}->ttl;
 			} else {
-				$ttl = 0;
+				$ttl = null;
 			}
 			
 			$key = $this->getCacheKey();

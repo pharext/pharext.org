@@ -17,9 +17,10 @@ $injector->share(Github\API::class)
 				0);
 		}
 		return new Github\API(
-			$config->github
-		   ,new Github\Storage\Session("gh-tokens")
+			 $config->github
+			,new Github\Storage\Session("gh-tokens")
 		   #,new Github\Storage\Memcache("gh-cache")
+			,new Github\Storage\Redis("gh-cache")
 	   );
 	});
 
