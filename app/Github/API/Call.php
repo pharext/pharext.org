@@ -58,10 +58,8 @@ abstract class Call
 	
 	function __invoke(callable $callback) {
 		if ($this->readFromCache($cached)) {
-			header("X-Cache-Hit: $this", false);
 			call_user_func_array($callback, $cached);
 		} else {
-			header("X-Cache-Miss: $this", false);
 			$this->enqueue($callback);
 		}
 		return $this;
@@ -99,7 +97,7 @@ abstract class Call
 		$args = $this->args;
 		unset($args["fresh"]);
 		ksort($args);
-		return sprintf("github:%s:%s:%s", $this->api->getToken(), $this, 
+		return sprintf("%s:%s:%s", $this->api->getToken(), $this, 
 			new QueryString($args));
 	}
 

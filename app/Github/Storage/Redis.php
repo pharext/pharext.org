@@ -38,7 +38,6 @@ class Redis implements Storage
 		}
 		$now = time();
 		$ltl = $ttl - ($now - $set);
-		header("X-Cache-Times: ltl=$ltl,now=$now,set=$set,ttl=$ttl", false);
 		if ($ltl >= 0) {
 			if ($update) {
 				$item->time = time();
