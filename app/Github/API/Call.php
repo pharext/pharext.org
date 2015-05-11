@@ -96,7 +96,7 @@ abstract class Call
 			new QueryString($this->args));
 	}
 
-	function readFromCache(&$cached = null, &$ttl = null) {
+	function readFromCache(array &$cached = null, &$ttl = null) {
 		if (empty($this->args["fresh"]) && ($cache = $this->api->getCacheStorage())) {
 			$key = $this->getCacheKey();
 			return $cache->get($key, $cached, $ttl);
@@ -104,7 +104,7 @@ abstract class Call
 		return false;
 	}
 	
-	function saveToCache($fresh) {
+	function saveToCache(array $fresh) {
 		if (($cache = $this->api->getCacheStorage())) {
 			if (isset($this->config->storage->cache->{$this}->ttl)) {
 				$ttl = $this->config->storage->cache->{$this}->ttl;

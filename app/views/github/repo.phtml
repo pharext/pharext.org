@@ -120,13 +120,13 @@
 				<div class="col-md-12">
 						<div class="checkbox">
 							<label for="hook-tag">
-								<input id="hook-tag" type="checkbox" name="tag" value="1">
+								<input id="hook-tag" type="checkbox" name="tag" value="1" <?= ($hook = $this->check($repo)) && in_array("create", $hook->events) ? "checked":"" ?>>
 								Automatically create a release when I push a tag.
 							</label>
 						</div>
 						<div class="checkbox">
 							<label for="hook-release">
-								<input id="hook-release" type="checkbox" name="release" value="1">
+								<input id="hook-release" type="checkbox" name="release" value="1" <?= ($hook = $this->check($repo)) && in_array("release", $hook->events) ? "checked":"" ?>>
 								Automatically upload a PHARext package as an asset to a release.
 							</label>
 						</div>

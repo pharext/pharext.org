@@ -58,7 +58,7 @@ abstract class Github implements Controller
 		if ($repo->hooks) {
 			foreach ($repo->hooks as $hook) {
 				if ($hook->name === "web" && $hook->config->url === $this->github->getConfig()->hook->url) {
-					return $hook->id;
+					return $hook;
 				}
 			}
 		}

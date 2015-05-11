@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Controller\Github;
+namespace app\Controller\Github\Hook;
 
 use app\Controller;
 use app\Github\API;
@@ -10,9 +10,9 @@ use http\Params;
 use pharext\Task;
 use pharext\SourceDir\Git;
 
-require_once __DIR__."/../../../vendor/m6w6/pharext/src/pharext/Version.php";
+require_once __DIR__."/../../../../vendor/m6w6/pharext/src/pharext/Version.php";
 
-class Hook implements Controller
+class Receive implements Controller
 {
 	private $app;
 	private $github;
