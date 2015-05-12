@@ -10,8 +10,7 @@
 <table class="table table-hover">
 	<thead>
 		<tr>
-			<th>Repo</th>
-			<th class="text-center">Fork</th>
+			<th colspan="2">Repo</th>
 			<th class="text-right">Last Pushed</th>
 			<th class="text-center">Hook</th>
 		</tr>
@@ -19,6 +18,15 @@
 	<tbody>
 		<?php foreach ($repos as $repo) : ?>
 		<tr class="<?= $this->check($repo) ? "success" : "" ?>">
+			<td>
+				<?php if ($repo->fork) : ?>
+					<span title="fork" class="octicon octicon-repo-forked" aria-hidden="true"></span>
+				<?php elseif ($repo->private) : ?>
+					<span title="fork" class="octicon octicon-key" aria-hidden="true"></span>
+				<?php else : ?>
+					<span title="repo" class="octicon octicon-repo" aria-hidden="true"></span>
+				<?php endif; ?>
+			</td>
 			<th>
 				<a href="<?= $baseUrl->mod("./github/repo/".$repo->full_name) ?>">
 					<big class="text-primary" title="<?= $this->e($repo->description) ?>"><?= $this->e($repo->name) ?></big>
@@ -26,24 +34,37 @@
 				<br>
 				<small><?= $this->e($this->shorten($repo->description)) ?></small>
 			</th>
-			<td class="text-center"><?php if ($repo->fork) : ?>
-				<span title="fork" class="octicon octicon-repo-forked" aria-hidden="true"></span>
-				<?php endif; ?>
-			</td>
 			<td class="text-right"><time datetime="<?= $this->e($repo->pushed_at) ?>"><?= $this->e($this->utc($repo->pushed_at)->format("Y-m-d H:i T")) ?></time></td>
 			<td class="text-center">
+				<?php if ($this->check($repo)) : ?>
+				<form class="form" style="display: inline-block" method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/hook/del") ?>"> 
+					<input type="hidden" name="returnback" value="1">
+					<button type="submit" class="btn btn-block btn-danger">
+						<span class="glyphicon glyphicon-remove"></span>
+						Remove Hook
+					</button>
+				</form>
+				<?php else : ?>
 				<form class="form-inline" style="display: inline-block" method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/hook/add") ?>">
+						<div class="checkbox">
+							<label for="hook-tag">
+								<input id="hook-tag" type="checkbox" name="tag" value="1" checked>
+								Release
+							</label>
+						</div>
+						<div class="checkbox">
+							<label for="hook-release">
+								<input id="hook-release" type="checkbox" name="release" value="1" checked>
+								Upload
+							</label>
+						</div>
 					<input type="hidden" name="returnback" value="1">
-					<button type="submit" class="btn btn-primary <?= $this->check($repo) ? "disabled":"" ?>">
-						<span class="glyphicon glyphicon-plus" title="Add pharext hook"></span>
+					<button type="submit" class="btn btn-block btn-primary">
+						<span class="glyphicon glyphicon-plus"></span>
+						Enable Hook
 					</button>
 				</form>
-				<form class="form-inline" style="display: inline-block" method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/hook/del") ?>"> 
-					<input type="hidden" name="returnback" value="1">
-					<button type="submit" class="btn btn-danger <?= $this->check($repo) ? "":"disabled" ?>">
-						<span class="glyphicon glyphicon-remove" title="Remove hook"></span>
-					</button>
-				</form>
+				<?php endif; ?>
 			</div>
 			</td>
 		</tr>
