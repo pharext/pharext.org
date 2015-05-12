@@ -105,7 +105,7 @@
 				<p>Is the <code>pharext</code> hook enabled?</p>
 			</div>
 			<div class="col-md-4 text-center">
-					<?php if ($this->check($repo)) : ?>
+					<?php if (!empty($hook)) : ?>
 					<span class="label label-info">YES</span>
 					<?php else : ?>
 					<span class="label label-warning">NO</span>
@@ -116,17 +116,33 @@
 
 	<div class="col-md-6">
 		<div class="row">
-			<form method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/hook/" . ($this->check($repo) ? "upd" : "add")) ?>">
-				<div class="col-md-12">
+			<form method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/hook/" . (!empty($hook) ? "upd" : "add")) ?>">
+				<div class="col-md-6">
+					<h4>PHARext Options:</h4>
+					<div class="checkbox">
+						<label for="hook-zend">
+							<input id="hook-zend" type="checkbox" name="zend" value="1" <?= (!empty($hook) && !empty($hook->config->zend)) ? "checked":""?>>
+							Mark as a ZendExtension.
+						</label>
+					</div>
+					<div class="checkbox <?= empty($repo->package_xml) ? "disabled text-muted":"" ?>">
+						<label for="hook-pecl">
+							<input id="hook-pecl" type="checkbox" name="pecl" value="1" <?= (!empty($hook) && !empty($hook->config->pecl)) ? "checked":""?> <?= empty($repo->package_xml) ? "disabled":"" ?>>
+							Use PECL package XML file.
+						</label>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<h4>Hook Options:</h4>
 						<div class="checkbox">
 							<label for="hook-tag">
-								<input id="hook-tag" type="checkbox" name="tag" value="1" <?= ($hook = $this->check($repo)) && in_array("create", $hook->events) ? "checked":"" ?>>
+								<input id="hook-tag" type="checkbox" name="tag" value="1" <?= (empty($hook) || in_array("create", $hook->events)) ? "checked":"" ?>>
 								Automatically create a release when I push a tag.
 							</label>
 						</div>
 						<div class="checkbox">
 							<label for="hook-release">
-								<input id="hook-release" type="checkbox" name="release" value="1" <?= ($hook = $this->check($repo)) && in_array("release", $hook->events) ? "checked":"" ?>>
+								<input id="hook-release" type="checkbox" name="release" value="1" <?= (empty($hook) || in_array("release", $hook->events)) ? "checked":"" ?>>
 								Automatically upload a PHARext package as an asset to a release.
 							</label>
 						</div>
@@ -139,7 +155,7 @@
 					</button>
 				</div>
 				<?php else : ?>
-				<div class="col-md-12">
+				<div class="col-md-6 col-md-offset-6">
 					<button type="submit" class="btn btn-lg btn-block btn-success">
 						<span class="octicon octicon-plug"></span>
 						Enable Hook

@@ -28,7 +28,8 @@
 					</a>
 					<ul class="dropdown-menu" role="menu">
 						<?php foreach ($pages as $page) : ?>
-						<li><a href="<?= $baseUrl->mod("./pages/". rawurlencode($page)) ?>"><?= $this->e($page) ?></a></li>
+						<li><a href="<?= $baseUrl->mod("./pages/". rawurlencode($page)) ?>">
+							<?= $this->e($page) ?></a></li>
 						<?php endforeach; ?>
 					</ul>
 				</li>

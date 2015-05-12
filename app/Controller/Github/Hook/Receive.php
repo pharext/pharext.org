@@ -80,9 +80,8 @@ class Receive implements Controller
 	private function uploadAssetForRelease($release, $repo) {
 		$this->setTokenForUser($repo->owner->login);
 		$asset = $this->createReleaseAsset($release, $repo);
-		// FIXME: use uri_template extension
 		$name = sprintf("%s-%s.ext.phar", $repo->name, $release->tag_name);
-		$url = str_replace("{?name}", "?name=$name", $release->upload_url);
+		$url = uri_template($release->upload_url, compact("name"));
 		$this->github->createReleaseAsset($url, $asset, "application/phar", function($json) {
 			$response = $this->app->getResponse();
 			$response->setResponseCode(201);
@@ -91,7 +90,6 @@ class Receive implements Controller
 	}
 	
 	private function createReleaseAsset($release, $repo) {
-		define("STDERR", fopen("/var/log/apache2/php_errors.log", "a"));
 		$source = (new Task\GitClone($repo->clone_url, $release->tag_name))->run();
 		$iterator = new Git($source);
 		$meta = [

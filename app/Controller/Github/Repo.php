@@ -32,6 +32,7 @@ class Repo extends Github
 		settype($repo->tags, "object");
 		$this->github->listHooks($repo->full_name, function($hooks) use($repo) {
 			$repo->hooks = $hooks;
+			$this->app->getView()->addData(["hook" => $this->checkRepoHook($repo)]);
 		});
 		$this->github->listTags($repo->full_name, 1, $this->createTagsCallback($repo));
 		$this->github->listReleases($repo->full_name, 1, $this->createReleasesCallback($repo));
