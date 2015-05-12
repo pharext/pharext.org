@@ -2,3 +2,4 @@ vendor
 nbproject
 app/credentials.ini
 config/credentials.ini
+logs/*.log
