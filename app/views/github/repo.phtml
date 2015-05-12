@@ -183,6 +183,8 @@
 		</h3>
 	</div>
 	<div class="panel-body">
+		<div class="row">
+			<div class="col-md-8">
 		<?php if (!empty($v->release)) : ?>
 			<p><?= $this->md($v->release->body) ?></p>
 		<?php endif; ?>
@@ -206,6 +208,24 @@
 				</span>
 			<?php endif; ?>
 		</ul>
+			</div>
+			<div class="col-md-4">
+		<?php if (!empty($v->release->assets)) : ?>
+			<ul class="list-inline pull-right">
+				<?php foreach ($v->release->assets as $asset) : ?>
+				<?php if (fnmatch("*.ext.phar", $asset->name)) : ?>
+				<li>
+					<a class="btn btn-success" href="<?= $this->e($asset->browser_download_url) ?>">
+						<span class="octicon octicon-package"></span>
+						<?= $this->e($asset->name) ?>
+					</a>
+				</li>
+				<?php endif; ?>
+				<?php endforeach; ?>
+			</ul>
+		<?php endif; ?>
+			</div>
+		</div>
 	</div>
 </div>
 <?php endforeach; ?>

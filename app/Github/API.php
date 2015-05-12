@@ -212,4 +212,9 @@ class API
 		$call = new API\Releases\CreateReleaseAsset($this, compact("url", "asset", "type"));
 		return $call($callback);
 	}
+	
+	function listReleaseAssets($repo, $id, callable $callback) {
+		$call = new API\Releases\ListReleaseAssets($this, compact("repo", "id"));
+		return $call($callback);
+	}
 }

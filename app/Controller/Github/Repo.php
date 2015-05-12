@@ -44,6 +44,9 @@ class Repo extends Github
 				$tag = $release->tag_name;
 				settype($repo->tags->$tag, "object");
 				$repo->tags->$tag->release = $release;
+				$this->github->listReleaseAssets($repo->full_name, $release->id, function($assets) use($release) {
+					$release->assets = $assets;
+				});
 			}
 		};
 	}
