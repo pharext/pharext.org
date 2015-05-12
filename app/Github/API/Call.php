@@ -3,6 +3,7 @@
 namespace app\Github\API;
 
 use app\Github\API;
+use app\Github\Storage\Item;
 use http\QueryString;
 use http\Url;
 use merry\Config;
@@ -96,17 +97,33 @@ abstract class Call
 	function getCacheKey() {
 		$args = $this->args;
 		unset($args["fresh"]);
+		if (isset($args["page"]) && !strcmp($args["page"], "1")) {
+			unset($args["page"]);
+		}
 		ksort($args);
 		return sprintf("%s:%s:%s", $this->api->getToken(), $this, 
 			new QueryString($args));
 	}
 
-	function readFromCache(array &$cached = null, &$ttl = null) {
-		if (empty($this->args["fresh"]) && ($cache = $this->api->getCacheStorage())) {
-			$key = $this->getCacheKey();
-			return $cache->get($key, $cached, $ttl);
+	function readFromCache(array &$value = null) {
+		if (!empty($this->args["fresh"])) {
+			return false;
 		}
-		return false;
+		if (!($cache = $this->api->getCacheStorage())) {
+			return false;
+		}
+		if (!strlen($key = $this->getCacheKey())) {
+			return false;
+		}
+		if (!$cache->get($key, $cached)) {
+			return false;
+		}
+		if (null !== $this->api->getMaxAge() && $cached->getAge() > $this->api->getMaxAge()) {
+			return false;
+		}
+		$this->api->getLogger()->debug("Cache-Hit: $this", $this->args);
+		$value = $cached->getValue();
+		return true;
 	}
 	
 	function saveToCache(array $fresh) {
@@ -118,7 +135,7 @@ abstract class Call
 			}
 			
 			$key = $this->getCacheKey();
-			$cache->set($key, $fresh, $ttl);
+			$cache->set($key, new Item($fresh, $ttl));
 		}
 	}
 	

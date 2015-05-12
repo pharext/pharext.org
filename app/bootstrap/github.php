@@ -16,8 +16,10 @@ $injector->share(Github\API::class)
 				$config->$basic->auth->toArray(),
 				0);
 		}
+		// FIXME: configure through app.ini
 		return new Github\API(
 			 $config->github
+			,new Github\Logger($config)
 			,new Github\Storage\Session("gh-tokens")
 		   #,new Github\Storage\Memcache("gh-cache")
 			,new Github\Storage\Redis("gh-cache")

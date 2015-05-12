@@ -3,6 +3,7 @@
 namespace app\Controller\Github;
 
 use app\Controller\Github;
+use app\Github\API\Hooks\ListHooks;
 
 class RepoHook extends Github
 {
@@ -34,20 +35,22 @@ class RepoHook extends Github
 	
 	function addHook($owner, $repo) {
 		$hook_conf = $this->app->getRequest()->getForm();
-		$call = $this->github->createRepoHook("$owner/$repo", $hook_conf, function($hook) use($owner, $repo, &$call) {
-			$call->dropFromCache();
-			$this->redirectBack("$owner/$repo");
-		});
-		$call->send();
+		$this->github->createRepoHook("$owner/$repo", $hook_conf, function($hook) use($owner, $repo) {
+			$call = new ListHooks($this->github, ["repo" => "$owner/$repo", "fresh" => true]);
+			$call(function($hooks, $links) use($owner, $repo, $call) {
+				$call->saveToCache([$hooks, $links]);
+				$this->redirectBack("$owner/$repo");
+			});
+		})->send();
 	}
 	
 	function updateHook($owner, $repo) {
-		$this->github->fetchRepo("$owner/$repo", function($repo) {
-			$call = $this->github->fetchHooks($repo->full_name, function($hooks, $links) use($repo, &$call) {
+		$this->github->readRepo("$owner/$repo", function($repo) {
+			$call = $this->github->listHooks($repo->full_name, function($hooks, $links) use($repo, &$call) {
 				$repo->hooks = $hooks;
 				if (($hook = $this->checkRepoHook($repo))) {
 					$hook_conf = $this->app->getRequest()->getForm();
-					$this->github->updateRepoHook($repo->full_name, $hook->id, $hook_conf, function($changed_hook) use($repo, $hook, $hooks, $links, $call) {
+					$this->github->updateRepoHook($repo->full_name, $hook->id, $hook_conf, function($changed_hook) use($repo, $hook, $hooks, $links, &$call) {
 						foreach ($changed_hook as $key => $val) {
 							$hook->$key = $val;
 						}
@@ -60,11 +63,11 @@ class RepoHook extends Github
 	}
 	
 	function delHook($owner, $repo) {
-		$this->github->fetchRepo("$owner/$repo", function($repo) {
-			$call = $this->github->fetchHooks($repo->full_name, function($hooks) use($repo, &$call) {
+		$this->github->readRepo("$owner/$repo", function($repo) {
+			$call = $this->github->listHooks($repo->full_name, function($hooks) use($repo, &$call) {
 				$repo->hooks = $hooks;
 				if (($hook = $this->checkRepoHook($repo))) {
-					$this->github->deleteRepoHook($repo->full_name, $hook->id, function() use($repo, $call) {
+					$this->github->deleteRepoHook($repo->full_name, $hook->id, function() use($repo, &$call) {
 						$call->dropFromCache();
 						$this->redirectBack($repo->full_name);
 					});

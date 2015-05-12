@@ -12,6 +12,8 @@ use http\Client;
 use http\QueryString;
 use http\Url;
 
+use Psr\Log\LoggerInterface;
+
 class API
 {
 	/**
@@ -33,12 +35,41 @@ class API
 	 * @var merry\Config
 	 */
 	private $config;
+	
+	/**
+	 * @var int
+	 */
+	private $maxAge;
+	
+	/**
+	 * @var \Psr\Log\LoggerInterface;
+	 */
+	private $logger;
 
-	function __construct(Config $config, Storage $tokens = null, Storage $cache = null) {
+	function __construct(Config $config, LoggerInterface $logger, Storage $tokens = null, Storage $cache = null) {
+		$this->logger = $logger;
 		$this->config = $config;
 		$this->client = new Client;
+		$this->client->attach(new ClientObserver($logger));
 		$this->tokens = $tokens ?: new Storage\Session;
 		$this->cache = $cache;
+	}
+	
+	/**
+	 * Set maximum acceptable age of cache items
+	 * @param int $seconds
+	 */
+	function setMaxAge($seconds) {
+		$this->maxAge = $seconds;
+		return $this;
+	}
+	
+	function getMaxAge() {
+		return $this->maxAge;
+	}
+	
+	function getLogger() {
+		return $this->logger;
 	}
 
 	function getConfig() {
@@ -66,16 +97,19 @@ class API
 	}
 
 	function setToken($token) {
-		$this->tokens->set("access_token", $token,
-			$this->config->storage->token->ttl);
+		$this->tokens->set("access_token", new Storage\Item(
+			$token,
+			$this->config->storage->token->ttl
+		));
 	}
 
 	function getToken() {
-		if ($this->tokens->get("access_token", $token, $ttl, true)) {
-			return $token;
+		if ($this->tokens->get("access_token", $token, true)) {
+			return $token->getValue();
 		}
-		if (isset($ttl)) {
-			throw new Exception\TokenExpired($ttl);
+		if (isset($token)) {
+			$this->logger->notice("Token expired", $token);
+			throw new Exception\TokenExpired($token->getLTL());
 		}
 		throw new Exception\TokenNotSet;
 	}
@@ -86,7 +120,7 @@ class API
 
 	function getAuthUrl($callback_url) {
 		$state = base64_encode(openssl_random_pseudo_bytes(24));
-		$this->tokens->set("state", $state, 5*60);
+		$this->tokens->set("state", new Storage\Item($state, 5*60));
 		$param = [
 			"state" => $state,
 			"client_id" => $this->config->client->id,
@@ -99,14 +133,16 @@ class API
 	}
 
 	function fetchToken($code, $state, callable $callback) {
-		if (!$this->tokens->get("state", $orig_state, $ttl, true)) {
-			if (isset($ttl)) {
-				throw new Exception\StateExpired($ttl);
+		if (!$this->tokens->get("state", $orig_state, true)) {
+			if (isset($orig_state)) {
+				$this->logger->notice("State expired", $orig_state);
+				throw new Exception\StateExpired($orig_state->getLTL());
 			}
 			throw new Exception\StateNotSet;
 		}
-		if ($state !== $orig_state) {
-			throw new Exception\StateMismatch($orig_state, $state);
+		if ($state !== $orig_state->getValue()) {
+			$this->logger->warning("State mismatch", compact("state", "orig_state"));
+			throw new Exception\StateMismatch($orig_state->getValue(), $state);
 		}
 		
 		$call = new API\Users\ReadAuthToken($this, [
@@ -117,37 +153,37 @@ class API
 		return $call($callback);
 	}
 	
-	function fetchUser(callable $callback) {
+	function readAuthUser(callable $callback) {
 		$call = new API\Users\ReadAuthUser($this);
 		return $call($callback);
 	}
 
-	function fetchRepos($page, callable $callback) {
+	function listRepos($page, callable $callback) {
 		$call = new API\Repos\ListRepos($this, compact("page"));
 		return $call($callback);
 	}
 
-	function fetchRepo($repo, callable $callback) {
+	function readRepo($repo, callable $callback) {
 		$call = new API\Repos\ReadRepo($this, compact("repo"));
 		return $call($callback);
 	}
 
-	function fetchHooks($repo, callable $callback) {
+	function listHooks($repo, callable $callback) {
 		$call = new API\Hooks\ListHooks($this, compact("repo"));
 		return $call($callback);
 	}
 
-	function fetchReleases($repo, $page, callable $callback) {
+	function listReleases($repo, $page, callable $callback) {
 		$call = new API\Releases\ListReleases($this, compact("repo", "page"));
 		return $call($callback);
 	}
 
-	function fetchTags($repo, $page, callable $callback) {
+	function listTags($repo, $page, callable $callback) {
 		$call = new API\Tags\ListTags($this, compact("repo", "page"));
 		return $call($callback);
 	}
 	
-	function fetchContents($repo, $path, callable $callback) {
+	function readContents($repo, $path, callable $callback) {
 		$call = new API\Repos\ReadContents($this, compact("repo", "path"));
 		return $call($callback);
 	}

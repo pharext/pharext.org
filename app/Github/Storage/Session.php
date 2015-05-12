@@ -12,24 +12,22 @@ class Session implements Storage
 		$this->ns = $ns;
 	}
 
-	function set($key, $val, $ttl = null) {
-		$_SESSION[$this->ns][$key] = [$val, $ttl, isset($ttl) ? time() : null];
+	function set($key, Item $item) {
+		$_SESSION[$this->ns][$key] = $item;
 		return $this;
 	}
 
-	function get($key, &$val = null, &$ltl = null, $update = false) {
+	function get($key, Item &$item = null, $update = false) {
 		if (!isset($_SESSION[$this->ns][$key])) {
 			return false;
 		}
-		list($val, $ttl, $set) = $_SESSION[$this->ns][$key];
-		if (!isset($ttl)) {
+		$item = $_SESSION[$this->ns][$key];
+		if (null === $item->getTTL()) {
 			return true;
 		}
-		$now = time();
-		$ltl = $ttl - ($now - $set);
-		if ($ltl >= 0) {
+		if ($item->getLTL() >= 0) {
 			if ($update) {
-				$_SESSION[$this->ns][$key][2] = $now;
+				$item->setTimestamp();
 			}
 			return true;
 		}

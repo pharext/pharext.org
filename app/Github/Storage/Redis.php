@@ -23,41 +23,29 @@ class Redis implements Storage
 		return sprintf("%s:%s", $this->ns, $key);
 	}
 
-	function get($key, &$val = null, &$ltl = null, $update = false) {
+	function get($key, Item &$item = null, $update = false) {
 		if (!$item = $this->rd->get($this->key($key))) {
-			header("Cache-Item: ".serialize($item), false);
 			return false;
 		}
 
-		$val = $item->value;
-		$ttl = $item->ttl;
-		$set = $item->time;
-
-		if (!isset($ttl)) {
+		if (null === $item->getTTL()) {
 			return true;
 		}
-		$now = time();
-		$ltl = $ttl - ($now - $set);
-		if ($ltl >= 0) {
+		if ($item->getLTL() >= 0) {
 			if ($update) {
-				$item->time = time();
-				$this->rd->setex($this->key($key), $ttl + 60*60*24, $item);
+				$item->setTimestamp();
+				$this->rd->setex($this->key($key), $item->getTTL() + 60*60*24, $item);
 			}
 			return true;
 		}
 		return false;
 	}
 
-	function set($key, $val, $ttl = null) {
-		$item = new Redis\Item([
-			"value" => $val,
-			"ttl" => $ttl,
-			"time" => isset($ttl) ? time() : null
-		]);
-		if (isset($ttl)) {
+	function set($key, Item $item) {
+		if (null === $item->getTTL()) {
 			$this->rd->set($this->key($key), $item);
 		} else {
-			$this->rd->setex($this->key($key), $ttl + 60*60*24, $item);
+			$this->rd->setex($this->key($key), $item->getTTL() + 60*60*24, $item);
 		}
 		return $this;
 	}
@@ -66,19 +54,3 @@ class Redis implements Storage
 		$this->rd->delete($this->key($key));
 	}
 }
-
-namespace app\Github\Storage\Redis;
-
-class Item
-{
-	public $value;
-	public $time;
-	public $ttl;
-
-	function __construct(array $data) {
-		foreach ($data as $key => $val) {
-			$this->$key = $val;
-		}
-	}
-}
-

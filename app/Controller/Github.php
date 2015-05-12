@@ -8,7 +8,7 @@ use app\Session;
 use app\Web;
 
 use http\QueryString;
-use http\Url;
+use http\Header;
 
 abstract class Github implements Controller
 {
@@ -36,6 +36,15 @@ abstract class Github implements Controller
 			"title" => "Github"
 		]);
 		$this->app->getView()->registerFunction("check", [$this, "checkRepoHook"]);
+		
+		if (($header = $this->app->getRequest()->getHeader("Cache-Control", Header::class))) {
+			$params = $header->getParams();
+			if (!empty($params["no-cache"])) {
+				$this->github->setMaxAge(0);
+			} elseif (!empty($params["max-age"])) {
+				$this->github->setMaxAge($params["max-age"]["value"]);
+			}
+		}
 	}
 
 	protected function checkToken() {
@@ -50,7 +59,7 @@ abstract class Github implements Controller
 	}
 
 	/**
-	 * Check if the pharext webhook is set for the repo and return its id
+	 * Check if the pharext webhook is set for the repo and return it
 	 * @param object $repo
 	 * @return int hook id
 	 */
@@ -64,20 +73,4 @@ abstract class Github implements Controller
 		}
 		return null;
 	}
-
-	function createLinkGenerator($links) {
-		return function($which) use($links) {
-			if (!isset($links[$which])) {
-				if ($which !== "next" || !isset($links["last"])) {
-					return null;
-				} else {
-					$which = "last";
-				}
-			}
-			$url = new Url($links[$which], null, 0);
-			$qry = new QueryString($url->query);
-			return $qry->getInt("page", 1);
-		};
-	}
-
 }

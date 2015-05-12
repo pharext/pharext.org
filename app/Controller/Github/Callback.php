@@ -33,7 +33,7 @@ class Callback extends Github
 				$this->app->getRequest()->getQuery("state"),
 				function($token) {
 					$this->github->setToken($token->access_token);
-					$this->github->fetchUser($this->createUserCallback($token));
+					$this->github->readAuthUser($this->createUserCallback($token));
 			})->send();
 			if (isset($this->session->returnto)) {
 				$returnto = $this->session->returnto;

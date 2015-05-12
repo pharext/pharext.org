@@ -47,10 +47,15 @@ class RequestException extends \Exception implements Exception
 		
 		$errors = "JSON errors:\n";
 		foreach ($this->errors as $error) {
-			$errors .= sprintf($reasons[$error->code], $error->resource, $error->field);
+			if ($error->code === "custom") {
+				$errors .= $error->message . "\n";
+			} else {
+				$errors .= sprintf($reasons[$error->code], $error->resource, $error->field);
+			}
 		}
 		return $errors;
 	}
+	
 	function __toString() {
 		return parent::__toString() . "\n". $this->getErrorsAsString();
 	}

@@ -22,7 +22,7 @@ class Memcache implements Storage
 		return sprintf("%s:%s", $this->ns, $key);
 	}
 
-	function get($key, &$val = null, &$ltl = null, $update = false) {
+	function get($key, Item &$item = null, $update = false) {
 		if (!$item = $this->mc->get($this->key($key))) {
 			return false;
 		}
@@ -31,28 +31,21 @@ class Memcache implements Storage
 		$ttl = $item->ttl;
 		$set = $item->time;
 
-		if (!isset($ttl)) {
+		if (null === $item->getTTL()) {
 			return true;
 		}
-		$now = time();
-		$ltl = $ttl - ($now - $set);
-		if ($ltl >= 0) {
+		if ($item->getLTL() >= 0) {
 			if ($update) {
-				$item->time = time();
-				$this->mc->set($this->key($key), $item, $ttl + 60*60*24);
+				$item->setTimestamp();
+				$this->mc->set($this->key($key), $item, $item->getTTL() + 60*60*24);
 			}
 			return true;
 		}
 		return false;
 	}
 
-	function set($key, $val, $ttl = null) {
-		$item = new Memcache\Item([
-			"value" => $val,
-			"ttl" => $ttl,
-			"time" => isset($ttl) ? time() : null
-		]);
-		$this->mc->set($this->key($key), $item, isset($ttl) ? $ttl + 60*60*24 : 0);
+	function set($key, Item $item) {
+		$this->mc->set($this->key($key), $item, (null !== $item->getTTL()) ? $item->getTTL() + 60*60*24 : 0);
 		return $this;
 	}
 
@@ -60,19 +53,3 @@ class Memcache implements Storage
 		$this->mc->delete($this->key($key));
 	}
 }
-
-namespace app\Github\Storage\Memcache;
-
-class Item
-{
-	public $value;
-	public $time;
-	public $ttl;
-
-	function __construct(array $data) {
-		foreach ($data as $key => $val) {
-			$this->$key = $val;
-		}
-	}
-}
-

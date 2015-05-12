@@ -10,7 +10,7 @@ class Repo extends Github
 		extract($args);
 		$this->app->getView()->addData(compact("owner", "name"));
 		if ($this->checkToken()) {
-			$this->github->fetchRepo(
+			$this->github->readRepo(
 				"$owner/$name",
 				[$this, "repoCallback"]
 			)->send();
@@ -30,12 +30,12 @@ class Repo extends Github
 			"title" => "Github: {$repo->name}"
 		]);
 		settype($repo->tags, "object");
-		$this->github->fetchHooks($repo->full_name, function($hooks) use($repo) {
+		$this->github->listHooks($repo->full_name, function($hooks) use($repo) {
 			$repo->hooks = $hooks;
 		});
-		$this->github->fetchTags($repo->full_name, 1, $this->createTagsCallback($repo));
-		$this->github->fetchReleases($repo->full_name, 1, $this->createReleasesCallback($repo));
-		$this->github->fetchContents($repo->full_name, null, $this->createContentsCallback($repo));
+		$this->github->listTags($repo->full_name, 1, $this->createTagsCallback($repo));
+		$this->github->listReleases($repo->full_name, 1, $this->createReleasesCallback($repo));
+		$this->github->readContents($repo->full_name, null, $this->createContentsCallback($repo));
 	}
 
 	function createReleasesCallback($repo) {

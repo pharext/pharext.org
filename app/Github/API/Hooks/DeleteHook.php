@@ -18,7 +18,7 @@ class DeleteHook extends Call
 			if ($response->getResponseCode() >= 400) {
 				throw new RequestException($response);
 			}
-			$callback($json);
+			$callback();
 			return true;
 		});
 	}

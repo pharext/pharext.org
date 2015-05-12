@@ -22,4 +22,8 @@ class ReadAuthToken extends Call
 			return true;
 		});
 	}
+	
+	function getCacheKey() {
+		return null;
+	}
 }
