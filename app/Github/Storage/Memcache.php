@@ -27,10 +27,6 @@ class Memcache implements Storage
 			return false;
 		}
 
-		$val = $item->value;
-		$ttl = $item->ttl;
-		$set = $item->time;
-
 		if (null === $item->getTTL()) {
 			return true;
 		}
