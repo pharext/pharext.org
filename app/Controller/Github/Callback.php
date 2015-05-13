@@ -4,14 +4,12 @@ namespace app\Controller\Github;
 
 use app\Controller\Github;
 use app\Github\API;
-use app\Github\Exception;
 use app\Model\Accounts;
 use app\Session;
 use app\Web;
 
 class Callback extends Github
 {
-	
 	/**
 	 * @var Accounts
 	 */

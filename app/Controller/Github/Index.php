@@ -8,21 +8,11 @@ class Index extends Github
 {
 	function __invoke(array $args = null) {
 		if ($this->checkToken()) {
-			$this->github->listRepos(
+			list($repos, $links) = $this->github->listRepos(
 				$this->app->getRequest()->getQuery("page"), 
-				[$this, "reposCallback"]
+				new \app\Github\API\Repos\ReposCallback($this->github)
 			)->send();
-			$this->app->display("github/index");
-		}
-	}
-
-	function reposCallback($repos, $links) {
-		$this->app->getView()->addData(compact("repos", "links"));
-
-		foreach ($repos as $repo) {
-			$this->github->listHooks($repo->full_name, function($hooks) use($repo) {
-				$repo->hooks = $hooks;
-			});
+			$this->app->display("github/index", compact("repos", "links"));
 		}
 	}
 }

@@ -168,6 +168,22 @@ class API
 		return $call($callback);
 	}
 
+	/**
+	 * Check if the pharext webhook is set for the repo and return it
+	 * @param object $repo
+	 * @return stdClass hook
+	 */
+	function checkRepoHook($repo) {
+		if ($repo->hooks) {
+			foreach ($repo->hooks as $hook) {
+				if ($hook->name === "web" && $hook->config->url === $this->config->hook->url) {
+					return $hook;
+				}
+			}
+		}
+		return null;
+	}
+
 	function listHooks($repo, callable $callback) {
 		$call = new API\Hooks\ListHooks($this, compact("repo"));
 		return $call($callback);

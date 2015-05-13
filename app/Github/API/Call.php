@@ -36,6 +36,11 @@ abstract class Call
 	protected $query;
 	
 	/**
+	 * @var array
+	 */
+	protected $result;
+	
+	/**
 	 * Queue this call to the API client
 	 */
 	abstract function enqueue(callable $callback);
@@ -58,8 +63,8 @@ abstract class Call
 	}
 	
 	function __invoke(callable $callback) {
-		if ($this->readFromCache($cached)) {
-			call_user_func_array($callback, $cached);
+		if ($this->readFromCache($this->result)) {
+			call_user_func_array($callback, $this->result);
 		} else {
 			$this->enqueue($callback);
 		}
@@ -79,7 +84,8 @@ abstract class Call
 	 * Call Client::send()
 	 */
 	function send() {
-		return $this->api->getClient()->send();
+		$this->api->getClient()->send();
+		return $this->result;
 	}
 	
 	/**

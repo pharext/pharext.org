@@ -8,7 +8,7 @@ use app\Model\Accounts;
 use app\Web;
 use http\Params;
 use pharext\Task;
-use pharext\SourceDir\Git;
+use pharext\SourceDir;
 
 require_once __DIR__."/../../../../vendor/m6w6/pharext/src/pharext/Version.php";
 
@@ -79,19 +79,22 @@ class Receive implements Controller
 	
 	private function uploadAssetForRelease($release, $repo) {
 		$this->setTokenForUser($repo->owner->login);
-		$asset = $this->createReleaseAsset($release, $repo);
-		$name = sprintf("%s-%s.ext.phar", $repo->name, $release->tag_name);
-		$url = uri_template($release->upload_url, compact("name"));
-		$this->github->createReleaseAsset($url, $asset, "application/phar", function($json) {
-			$response = $this->app->getResponse();
-			$response->setResponseCode(201);
-			$response->setHeader("Location", $json->url);
+		$this->github->listHooks($repo->full_name, function($hooks) use($release, $repo) {
+			$repo->hooks = $hooks;
+			$asset = $this->createReleaseAsset($release, $repo);
+			$name = sprintf("%s-%s.ext.phar", $repo->name, $release->tag_name);
+			$url = uri_template($release->upload_url, compact("name"));
+			$this->github->createReleaseAsset($url, $asset, "application/phar", function($json) {
+				$response = $this->app->getResponse();
+				$response->setResponseCode(201);
+				$response->setHeader("Location", $json->url);
+			});
 		})->send();
 	}
 	
 	private function createReleaseAsset($release, $repo) {
 		$source = (new Task\GitClone($repo->clone_url, $release->tag_name))->run();
-		$iterator = new Git($source);
+		$iterator = new SourceDir\Git($source);
 		$meta = [
 			"header" => sprintf("pharext v%s (c) Michael Wallner <mike@php.net>", \pharext\VERSION),
 			"version" => \pharext\VERSION,

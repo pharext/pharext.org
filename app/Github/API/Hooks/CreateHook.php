@@ -39,6 +39,7 @@ class CreateHook extends Call
 			if ($response->getResponseCode() >= 400 || null === ($json = json_decode($response->getBody()))) {
 				throw new RequestException($response);
 			}
+			$this->result = [$json];
 			$callback($json);
 			return true;
 		});

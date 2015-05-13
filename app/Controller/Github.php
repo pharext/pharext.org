@@ -35,7 +35,7 @@ abstract class Github implements Controller
 			"location" => "github", 
 			"title" => "Github"
 		]);
-		$this->app->getView()->registerFunction("check", [$this, "checkRepoHook"]);
+		$this->app->getView()->registerFunction("check", [$github, "checkRepoHook"]);
 		
 		if (($header = $this->app->getRequest()->getHeader("Cache-Control", Header::class))) {
 			$params = $header->getParams();
@@ -56,21 +56,5 @@ abstract class Github implements Controller
 			"query" => new QueryString(["returnto" => $this->session->current])
 		]));
 		return false;
-	}
-
-	/**
-	 * Check if the pharext webhook is set for the repo and return it
-	 * @param object $repo
-	 * @return int hook id
-	 */
-	function checkRepoHook($repo) {
-		if ($repo->hooks) {
-			foreach ($repo->hooks as $hook) {
-				if ($hook->name === "web" && $hook->config->url === $this->github->getConfig()->hook->url) {
-					return $hook;
-				}
-			}
-		}
-		return null;
 	}
 }

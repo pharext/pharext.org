@@ -18,7 +18,8 @@ class ReadAuthUser extends Call
 			if ($response->getResponseCode() >= 400 || null === ($json = json_decode($response->getBody()))) {
 				throw new RequestException($response);
 			}
-			$this->saveToCache([$json]);
+			$this->result = [$json];
+			$this->saveToCache($this->result);
 			$callback($json);
 			return true;
 		});

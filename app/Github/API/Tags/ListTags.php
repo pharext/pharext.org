@@ -20,7 +20,8 @@ class ListTags extends Call
 				throw new RequestException($response);
 			}
 			$links = new Links($response->getHeader("Link"));
-			$this->saveToCache([$json, $links]);
+			$this->result = [$json, $links];
+			$this->saveToCache($this->result);
 			$callback($json, $links);
 			return true;
 		});

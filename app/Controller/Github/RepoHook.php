@@ -48,7 +48,7 @@ class RepoHook extends Github
 		$this->github->readRepo("$owner/$repo", function($repo) {
 			$call = $this->github->listHooks($repo->full_name, function($hooks, $links) use($repo, &$call) {
 				$repo->hooks = $hooks;
-				if (($hook = $this->checkRepoHook($repo))) {
+				if (($hook = $this->github->checkRepoHook($repo))) {
 					$hook_conf = $this->app->getRequest()->getForm();
 					$this->github->updateRepoHook($repo->full_name, $hook->id, $hook_conf, function($changed_hook) use($repo, $hook, $hooks, $links, &$call) {
 						foreach ($changed_hook as $key => $val) {
@@ -66,7 +66,7 @@ class RepoHook extends Github
 		$this->github->readRepo("$owner/$repo", function($repo) {
 			$call = $this->github->listHooks($repo->full_name, function($hooks) use($repo, &$call) {
 				$repo->hooks = $hooks;
-				if (($hook = $this->checkRepoHook($repo))) {
+				if (($hook = $this->github->checkRepoHook($repo))) {
 					$this->github->deleteRepoHook($repo->full_name, $hook->id, function() use($repo, &$call) {
 						$call->dropFromCache();
 						$this->redirectBack($repo->full_name);
