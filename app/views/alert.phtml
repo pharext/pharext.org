@@ -12,7 +12,5 @@
 
 <?php if (APP_ENVIRONMENT != "production") : ?>
 <h3>Stack Trace</h3>
-<pre><?= $this->e($exception->getTraceAsString()) ?></pre>
-<h3>Full Dump</h3>
-<pre><?= $this->e($exception) ?></pre>
+<pre style="display:block; overflow-x: scroll"><?= $this->e($exception) ?></pre>
 <?php endif; ?>

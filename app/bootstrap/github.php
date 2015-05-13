@@ -17,12 +17,20 @@ $injector->share(Github\API::class)
 				0);
 		}
 		// FIXME: configure through app.ini
+		try {
+			$cache = new Github\Storage\Redis("gh-cache");
+		} catch (\Exception $ex) {
+			try {
+				$cache = new Github\Storage\Memcache("gh-cache");
+			} catch (\Exception $ex) {
+				$cache = null;
+			}
+		}
 		return new Github\API(
 			 $config->github
 			,new Github\Logger($config)
 			,new Github\Storage\Session("gh-tokens")
-		   #,new Github\Storage\Memcache("gh-cache")
-			,new Github\Storage\Redis("gh-cache")
+			,$cache
 	   );
 	});
 

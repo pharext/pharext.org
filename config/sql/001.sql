@@ -26,5 +26,5 @@ create table owners (
 	,login text not null
 	,owner jsonb
 	,primary key (account,authority)
-	,unique key (login,authority)
+	,unique (login,authority)
 );
