@@ -11,14 +11,14 @@ CREATE
 	NOSUPERUSER
 ;
 
--- createdb pharext -O pharext -E utf8 -l en_US.utf8
+-- createdb pharext -O pharext -E UTF8 -l en_US.UTF-8
 CREATE 
 	DATABASE	"pharext"
 	OWNER		"pharext"
 	TEMPLATE	"template0"
-	ENCODING	'utf8'
-	LC_CTYPE	'en_US.utf8'
-	LC_COLLATE	'en_US.utf8'
+	ENCODING	'UTF-8'
+	LC_CTYPE	'en_US.UTF-8'
+	LC_COLLATE	'en_US.UTF-8'
 ;
 
 \c pharext
