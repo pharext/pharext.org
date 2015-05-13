@@ -4,11 +4,14 @@ namespace app\Controller;
 
 use app\Controller;
 use app\Github\API;
+use app\Model\Account;
+use app\Model\Owner;
+use app\Model\Token;
 use app\Session;
 use app\Web;
-
-use http\QueryString;
+use http\Cookie;
 use http\Header;
+use http\QueryString;
 
 abstract class Github implements Controller
 {
@@ -18,12 +21,12 @@ abstract class Github implements Controller
 	protected $app;
 
 	/**
-	 * @var \app\Github\API
+	 * @var API
 	 */
 	protected $github;
 
 	/**
-	 * @var \app\Session
+	 * @var Session
 	 */
 	protected $session;
 	
@@ -45,6 +48,19 @@ abstract class Github implements Controller
 				$this->github->setMaxAge($params["max-age"]["value"]);
 			}
 		}
+	}
+
+	protected function login(Account $account, Token $token, Owner $owner) {
+		$auth = new Cookie;
+		$auth->setCookie("account", $account->account->get());
+		$auth->setFlags(Cookie::SECURE | Cookie::HTTPONLY);
+		$auth->setPath($this->app->getBaseUrl()->path);
+		$auth->setMaxAge(60*60*24);
+		$this->app->getResponse()->setCookie($auth);
+
+		$this->github->setToken($token->token->get());
+		$this->session->account = $account->account->get();
+		$this->session->github = (object) $owner->export();
 	}
 
 	protected function checkToken() {

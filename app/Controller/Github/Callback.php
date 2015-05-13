@@ -7,6 +7,7 @@ use app\Github\API;
 use app\Model\Accounts;
 use app\Session;
 use app\Web;
+use http\Cookie;
 
 class Callback extends Github
 {
@@ -45,20 +46,21 @@ class Callback extends Github
 		$this->app->display("github/callback");
 	}
 	
-	function createUserCallback($token) {
-		return function($user) use($token) {
+	function createUserCallback($oauth) {
+		return function($user) use($oauth) {
 			$tx = $this->accounts->getConnection()->startTransaction();
-			
-			if (!($account = $this->accounts->byOAuth("github", $token->access_token, $user->login))) {
-				$account = $this->accounts->createOAuthAccount("github", $token->access_token, $user->login);
+
+			if (($cookie = $this->app->getRequest()->getCookie("account"))) {
+				$account = $this->accounts->find(["account=" => $cookie])->current();
+			} elseif (!($account = $this->accounts->byOAuth("github", $oauth->access_token, $user->login))) {
+				$account = $this->accounts->createOAuthAccount("github", $oauth->access_token, $user->login);
 			}
-			$account->updateToken("github", $token->access_token, $token);
+			$token = $account->updateToken("github", $oauth->access_token, $oauth);
 			$owner = $account->updateOwner("github", $user->login, $user);
 			
 			$tx->commit();
 			
-			$this->session->account = $account->account->get();
-			$this->session->github = (object) $owner->export();
+			$this->login($account, $token, $owner);
 		};
 	}
 }

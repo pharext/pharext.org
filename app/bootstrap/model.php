@@ -22,6 +22,10 @@ $injector->define(Model\Accounts::class, [
 		"conn" => Connection::class,
 	]);
 
+\pq\Gateway\Table::$defaultResolver = function($table) use($injector) {
+	return $injector->make("app\\Model\\" . ucfirst($table));
+};
+
 //$modelconf = function($key, $injector) {
 //	return new Table($key, $injector->make(Connection::class));
 //};

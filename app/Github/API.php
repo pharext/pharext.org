@@ -49,7 +49,8 @@ class API
 	function __construct(Config $config, LoggerInterface $logger, Storage $tokens = null, Storage $cache = null) {
 		$this->logger = $logger;
 		$this->config = $config;
-		$this->client = new Client;
+		$this->client = new Client("curl", "github");
+		$this->client->configure($config->http->configure);
 		$this->client->attach(new ClientObserver($logger));
 		$this->tokens = $tokens ?: new Storage\Session;
 		$this->cache = $cache;
