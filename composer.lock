@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6c9f8c8951d5c56a9de109fd70ec3604",
+    "hash": "910f08879af0e54cb4aaa21d1ca5eef2",
     "packages": [
         {
             "name": "league/plates",
@@ -144,16 +144,16 @@
         },
         {
             "name": "m6w6/pq-gateway",
-            "version": "v2.0.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/m6w6/pq-gateway.git",
-                "reference": "19590cfee428909a9ad2195b02a30ae176980992"
+                "reference": "3aa333045c0bb93b83e87e190b4ed49333d106f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/m6w6/pq-gateway/zipball/19590cfee428909a9ad2195b02a30ae176980992",
-                "reference": "19590cfee428909a9ad2195b02a30ae176980992",
+                "url": "https://api.github.com/repos/m6w6/pq-gateway/zipball/3aa333045c0bb93b83e87e190b4ed49333d106f0",
+                "reference": "3aa333045c0bb93b83e87e190b4ed49333d106f0",
                 "shasum": ""
             },
             "suggest": {
@@ -185,7 +185,7 @@
                 "postgresql",
                 "pq"
             ],
-            "time": "2014-10-15 15:30:26"
+            "time": "2015-05-08 10:10:49"
         },
         {
             "name": "monolog/monolog",
@@ -403,7 +403,8 @@
     "stability-flags": {
         "m6w6/pharext": 20,
         "rdlowrey/auryn": 20,
-        "m6w6/pharext.wiki": 20
+        "m6w6/pharext.wiki": 20,
+        "m6w6/pq-gateway": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
