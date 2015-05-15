@@ -24,27 +24,31 @@ class Web
 	}
 
 	function __invoke(Dispatcher $dispatcher) {
-		$route = $dispatcher->dispatch($this->request->getRequestMethod(),
-			$this->baseUrl->pathinfo($this->request->getRequestUrl()));
+		if (!file_exists("../config/maintenance")) {
+			$route = $dispatcher->dispatch($this->request->getRequestMethod(),
+				$this->baseUrl->pathinfo($this->request->getRequestUrl()));
 
-		switch ($route[0]) {
-			case Dispatcher::NOT_FOUND:
-				$this->display(404, null, 404);
-				break;
+			switch ($route[0]) {
+				case Dispatcher::NOT_FOUND:
+					$this->display(404, null, 404);
+					break;
 
-			case Dispatcher::METHOD_NOT_ALLOWED:
-				$this->display(405, null, 405, ["Allowed" => $route[1]]);
-				break;
+				case Dispatcher::METHOD_NOT_ALLOWED:
+					$this->display(405, null, 405, ["Allowed" => $route[1]]);
+					break;
 
-			case Dispatcher::FOUND:
-				list(, $handler, $args) = $route;
-				try {
-					$handler(array_map("urldecode", $args));
-				} catch (\Exception $exception) {
-					self::cleanBuffers();
-					$this->display(500, compact("exception"), 500, ["X-Exception", get_class($exception)]);
-				}
-				break;
+				case Dispatcher::FOUND:
+					list(, $handler, $args) = $route;
+					try {
+						$handler(array_map("urldecode", $args));
+					} catch (\Exception $exception) {
+						self::cleanBuffers();
+						$this->display(500, compact("exception"), 500, ["X-Exception", get_class($exception)]);
+					}
+					break;
+			}
+		} else {
+			$this->display(503, null, 503);
 		}
 
 		$this->response->send();
