@@ -17,18 +17,20 @@ $injector->share(RouteCollector::class)
 			$injector->make(Session::class)->reset()->regenerateId();
 			$injector->make(Web::class)->redirect($injector->make(BaseUrl::class));
 		});
-		$routes->addRoute("GET", "/session", function(array $args = null) use($injector) {
-			$session = $injector->make(Session::class);
-			$response = $injector->make(Response::class);
-			if (!(extension_loaded("xdebug") && ini_get("xdebug.overload_var_dump") && ini_get("html_errors"))) {
-				$response->setContentType("text/plain");
-			}
-			ob_start($response);
-			var_dump($_SESSION, $session);
-		});
-		$routes->addRoute("GET", "/info", function(array $args = null) {
-			phpinfo();
-		});
+		if (APP_ENVIRONMENT !== "production") {
+			$routes->addRoute("GET", "/session", function(array $args = null) use($injector) {
+				$session = $injector->make(Session::class);
+				$response = $injector->make(Response::class);
+				if (!(extension_loaded("xdebug") && ini_get("xdebug.overload_var_dump") && ini_get("html_errors"))) {
+					$response->setContentType("text/plain");
+				}
+				ob_start($response);
+				var_dump($_SESSION, $session);
+			});
+			$routes->addRoute("GET", "/info", function(array $args = null) {
+				phpinfo();
+			});
+		}
 
 		foreach (parse_ini_file(__DIR__."/../../config/routes.ini", true) as $controller => $definition) {
 			$factory = function(array $args = null) use($injector, $controller) {
