@@ -46,10 +46,7 @@
 					&copy; 2015 <abbr title="Michael Wallner">m6w6</abbr> 
 					<addr>&lt;mike&#x40;php&#x2e;net&gt;</addr>
 					&mdash; Powered by <a href="//github.com/m6w6/pharext">pharext
-					<?php
-					include_once __DIR__."/../../vendor/m6w6/pharext/src/pharext/Version.php";
-					echo pharext\VERSION;
-					?>
+					<?= \pharext\Metadata::version() ?>
 					</a>
 				</p>
 			</div>

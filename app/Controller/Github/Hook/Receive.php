@@ -8,9 +8,8 @@ use app\Model\Accounts;
 use app\Web;
 use http\Params;
 use pharext\Task;
+use pharext\Metadata;
 use pharext\SourceDir;
-
-require_once __DIR__."/../../../../vendor/m6w6/pharext/src/pharext/Version.php";
 
 class Receive implements Controller
 {
@@ -93,19 +92,16 @@ class Receive implements Controller
 	}
 	
 	private function createReleaseAsset($release, $repo) {
-		$source = (new Task\GitClone($repo->clone_url, $release->tag_name))->run();
-		$iterator = new SourceDir\Git($source);
-		$meta = [
-			"header" => sprintf("pharext v%s (c) Michael Wallner <mike@php.net>", \pharext\VERSION),
-			"version" => \pharext\VERSION,
-			"date" => date("Y-m-d"),
+		$dir = (new Task\GitClone($repo->clone_url, $release->tag_name))->run();
+		$src = new SourceDir\Git($dir);
+		$meta = Metadata::all() + [
 			"name" => $repo->name,
 			"release" => $release->tag_name,
-			"license" => @file_get_contents(current(glob($iterator->getBaseDir()."/LICENSE*"))),
+			"license" => $src->getLicense(),
 			"stub" => "pharext_installer.php",
 			"type" => false ? "zend_extension" : "extension",
 		];
-		$file = (new Task\PharBuild($iterator, $meta))->run();
+		$file = (new Task\PharBuild($src, $meta))->run();
 		return $file;
 	}
 	
