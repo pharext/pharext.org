@@ -8,7 +8,8 @@ use http\Params;
 
 class Session implements ArrayAccess
 {
-	function __construct(Config $config, Response $response) {
+	function __construct(Config $config, BaseUrl $baseUrl, Response $response) {
+		ini_set("session.cookie_path", $baseUrl->path);
 		foreach ($config->session as $key => $val) {
 			ini_set("session.$key", $val);
 		}
