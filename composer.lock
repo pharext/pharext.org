@@ -104,12 +104,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/m6w6/pharext.git",
-                "reference": "e458434f1a5539f1905e61835bed0123f1635067"
+                "reference": "e44f0adc7b18845a2cd3dc63fdab5d9bcdc10f76"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/m6w6/pharext/zipball/104022998764f0f0c94e5e2e4023c99d01ac5483",
-                "reference": "e458434f1a5539f1905e61835bed0123f1635067",
+                "url": "https://api.github.com/repos/m6w6/pharext/zipball/e44f0adc7b18845a2cd3dc63fdab5d9bcdc10f76",
+                "reference": "e44f0adc7b18845a2cd3dc63fdab5d9bcdc10f76",
                 "shasum": ""
             },
             "bin": [
@@ -129,7 +129,7 @@
                 "package",
                 "phar"
             ],
-            "time": "2015-05-08 08:54:09"
+            "time": "2015-05-15 10:52:54"
         },
         {
             "name": "m6w6/pharext.wiki",
