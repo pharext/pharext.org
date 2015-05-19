@@ -92,14 +92,19 @@ class Receive implements Controller
 	}
 	
 	private function createReleaseAsset($release, $repo) {
+		$hook = $this->github->checkRepoHook($repo);
 		$dir = (new Task\GitClone($repo->clone_url, $release->tag_name))->run();
-		$src = new SourceDir\Git($dir);
+		if (!empty($hook->config->pecl)) {
+			$src = new SoureDir\Pecl($dir);
+		} else {
+			$src = new SourceDir\Git($dir);
+		}
 		$meta = Metadata::all() + [
 			"name" => $repo->name,
 			"release" => $release->tag_name,
 			"license" => $src->getLicense(),
 			"stub" => "pharext_installer.php",
-			"type" => false ? "zend_extension" : "extension",
+			"type" => !empty($hook->config->zend) ? "zend_extension" : "extension",
 		];
 		$file = (new Task\PharBuild($src, $meta))->run();
 		return $file;

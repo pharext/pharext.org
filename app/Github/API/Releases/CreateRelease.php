@@ -16,7 +16,7 @@ class CreateRelease extends Call
 			"Content-Type" => "application/json",
 		]);
 		$request->getBody()->append(json_encode([
-			"tag_name" => $this->args["tag"]
+			"tag_name" => $this->args["tag"],
 		]));
 		$this->api->getClient()->enqueue($request, function($response) use($callback) {
 			if ($response->getResponseCode() >= 400 || null === ($json = json_decode($response->getBody()))) {

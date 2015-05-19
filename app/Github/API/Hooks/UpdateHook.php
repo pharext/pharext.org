@@ -19,8 +19,16 @@ class UpdateHook extends \app\Github\API\Call
 		if (!empty($this->args["conf"]["release"])) {
 			$events[] = "release";
 		}
-		
-		$request->getBody()->append(json_encode(compact("events")));
+		$config = [
+			"zend" => !empty($this->args["conf"]["zend"]),
+			"pecl" => !empty($this->args["conf"]["pecl"]),
+			"url" => $this->config->hook->url,
+			"content_type" => $this->config->hook->content_type,
+			"insecure_ssl" => $this->config->hook->insecure_ssl,
+			"secret" => $this->config->client->secret, // FIXME: bad idea?
+		];
+
+		$request->getBody()->append(json_encode(compact("events", "config")));
 		$this->api->getClient()->enqueue($request, function($response) use($callback) {
 			if ($response->getResponseCode() >= 400 || null === ($json = json_decode($response->getBody()))) {
 				throw new \app\Github\Exception\RequestException($response);

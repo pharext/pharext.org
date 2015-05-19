@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "hash": "910f08879af0e54cb4aaa21d1ca5eef2",
@@ -104,12 +104,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/m6w6/pharext.git",
-                "reference": "e44f0adc7b18845a2cd3dc63fdab5d9bcdc10f76"
+                "reference": "c99dfed4c3056e0a8ed1351adb79dd4f16324965"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/m6w6/pharext/zipball/e44f0adc7b18845a2cd3dc63fdab5d9bcdc10f76",
-                "reference": "e44f0adc7b18845a2cd3dc63fdab5d9bcdc10f76",
+                "url": "https://api.github.com/repos/m6w6/pharext/zipball/c99dfed4c3056e0a8ed1351adb79dd4f16324965",
+                "reference": "c99dfed4c3056e0a8ed1351adb79dd4f16324965",
                 "shasum": ""
             },
             "bin": [
@@ -129,7 +129,7 @@
                 "package",
                 "phar"
             ],
-            "time": "2015-05-15 10:52:54"
+            "time": "2015-05-18 15:11:04"
         },
         {
             "name": "m6w6/pharext.wiki",
@@ -351,7 +351,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rdlowrey/Auryn/zipball/be3807b62a6991e61151b55b6974dc1289afabd5",
+                "url": "https://api.github.com/repos/rdlowrey/Auryn/zipball/d0d875868e1d7d241983c88252c07965a65224c1",
                 "reference": "2e03bf93ddcd855e962d314cce74ce2a01a49228",
                 "shasum": ""
             },
