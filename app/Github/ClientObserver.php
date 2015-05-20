@@ -27,7 +27,12 @@ class ClientObserver implements SplObserver
 				break;
 			case "finished":
 				$response = $client->getResponse($request);
-				$message = sprintf("API-Shot: finished [%d] %s %s", $response->getResponseCode(), $request->getRequestMethod(), $request->getRequestUrl());
+				$message = sprintf("API-Shot: finished [%d] (rate-limit:%d/%d) %s %s",
+					$response->getResponseCode(),
+					$response->getHeader("X-RateLimit-Remaining"),
+					$response->getHeader("X-RateLimit-Limit"),
+					$request->getRequestMethod(),
+					$request->getRequestUrl());
 				if ($response->getResponseCode() >= 400 || $response->getTransferInfo("error")) {
 					$this->logger->error($message, (array) $response->getTransferInfo());
 				} else {
