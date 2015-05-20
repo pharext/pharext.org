@@ -18,7 +18,7 @@
 		}
 	},
 	"require": {
-		"m6w6/pharext": "dev-master",
+		"m6w6/pharext": "~4.0",
 		"m6w6/merry": "~1.1",
 		"nikic/fast-route": "0.4.*",
 		"league/plates": "~3.1",

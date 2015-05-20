@@ -49,7 +49,9 @@ $injector->share(RouteCollector::class)
 
 $injector->share(Dispatcher::class)
 	->alias(Dispatcher::class, Dispatcher\GroupCountBased::class)
-	->delegate(Dispatcher\GroupCountBased::class, function($class, Injector $injector) {
-		return new $class($injector->make(RouteCollector::class)->getData());
-	});
+	->define(Dispatcher\GroupCountBased::class, [
+		"+data" => function($name, Injector $injector) {
+			return $injector->make(RouteCollector::class)->getData();
+		}
+	]);
 

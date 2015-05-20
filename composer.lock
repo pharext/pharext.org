@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "910f08879af0e54cb4aaa21d1ca5eef2",
+    "hash": "3c2c0d61af5e4ef2dd29dff656ba1236",
     "packages": [
         {
             "name": "league/plates",
@@ -100,16 +100,16 @@
         },
         {
             "name": "m6w6/pharext",
-            "version": "dev-master",
+            "version": "v4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/m6w6/pharext.git",
-                "reference": "c99dfed4c3056e0a8ed1351adb79dd4f16324965"
+                "reference": "d017df1dcb270773804bbed4628397a9c7df30c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/m6w6/pharext/zipball/c99dfed4c3056e0a8ed1351adb79dd4f16324965",
-                "reference": "c99dfed4c3056e0a8ed1351adb79dd4f16324965",
+                "url": "https://api.github.com/repos/m6w6/pharext/zipball/d017df1dcb270773804bbed4628397a9c7df30c4",
+                "reference": "d017df1dcb270773804bbed4628397a9c7df30c4",
                 "shasum": ""
             },
             "bin": [
@@ -129,7 +129,7 @@
                 "package",
                 "phar"
             ],
-            "time": "2015-05-18 15:11:04"
+            "time": "2015-05-20 06:39:24"
         },
         {
             "name": "m6w6/pharext.wiki",
@@ -347,16 +347,20 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/rdlowrey/Auryn.git",
-                "reference": "2e03bf93ddcd855e962d314cce74ce2a01a49228"
+                "reference": "d0d875868e1d7d241983c88252c07965a65224c1"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/rdlowrey/Auryn/zipball/d0d875868e1d7d241983c88252c07965a65224c1",
-                "reference": "2e03bf93ddcd855e962d314cce74ce2a01a49228",
+                "reference": "d0d875868e1d7d241983c88252c07965a65224c1",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "athletic/athletic": "~0.1",
+                "phpunit/phpunit": "~4.5"
             },
             "type": "library",
             "autoload": {
@@ -394,14 +398,13 @@
                 "dic",
                 "ioc"
             ],
-            "time": "2015-05-01 14:20:14"
+            "time": "2015-05-17 18:29:19"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "m6w6/pharext": 20,
         "rdlowrey/auryn": 20,
         "m6w6/pharext.wiki": 20,
         "m6w6/pq-gateway": 20
