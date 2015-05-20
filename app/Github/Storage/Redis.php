@@ -15,16 +15,13 @@ class Redis implements Storage
 			$rd = new \Redis();
 			$rd->open("localhost");
 			$rd->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
+			$rd->setOption(\Redis::OPT_PREFIX, "$ns:");
 		}
 		$this->rd = $rd;
 	}
 
-	private function key($key) {
-		return sprintf("%s:%s", $this->ns, $key);
-	}
-
 	function get($key, Item &$item = null, $update = false) {
-		if (!$item = $this->rd->get($this->key($key))) {
+		if (!$item = $this->rd->get($key)) {
 			return false;
 		}
 
@@ -34,7 +31,7 @@ class Redis implements Storage
 		if ($item->getLTL() >= 0) {
 			if ($update) {
 				$item->setTimestamp();
-				$this->rd->setex($this->key($key), $item->getTTL() + 60*60*24, $item);
+				$this->rd->setex($key, $item->getTTL() + 60*60*24, $item);
 			}
 			return true;
 		}
@@ -43,14 +40,14 @@ class Redis implements Storage
 
 	function set($key, Item $item) {
 		if (null === $item->getTTL()) {
-			$this->rd->set($this->key($key), $item);
+			$this->rd->set($key, $item);
 		} else {
-			$this->rd->setex($this->key($key), $item->getTTL() + 60*60*24, $item);
+			$this->rd->setex($key, $item->getTTL() + 60*60*24, $item);
 		}
 		return $this;
 	}
 
 	function del($key) {
-		$this->rd->delete($this->key($key));
+		$this->rd->delete($key);
 	}
 }

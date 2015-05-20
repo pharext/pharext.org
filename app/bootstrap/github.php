@@ -16,19 +16,18 @@ $injector->share(Github\API::class)
 				$config->$basic->auth->toArray(),
 				0);
 		}
+		$logger = new Github\Logger($config);
+		
 		// FIXME: configure through app.ini
 		try {
 			$cache = new Github\Storage\Redis("gh-cache");
 		} catch (\Exception $ex) {
-			try {
-				$cache = new Github\Storage\Memcache("gh-cache");
-			} catch (\Exception $ex) {
-				$cache = null;
-			}
+			/* Memcached won't throw an exception */
+			$cache = new Github\Storage\Memcache("gh-cache");
 		}
 		return new Github\API(
 			 $config->github
-			,new Github\Logger($config)
+			,$logger
 			,new Github\Storage\Session("gh-tokens")
 			,$cache
 	   );
