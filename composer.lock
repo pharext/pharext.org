@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3c2c0d61af5e4ef2dd29dff656ba1236",
+    "hash": "dd47dcfb975d0ad4b92b940fc58e1eaf",
     "packages": [
         {
             "name": "league/plates",
@@ -144,20 +144,21 @@
         },
         {
             "name": "m6w6/pq-gateway",
-            "version": "dev-master",
+            "version": "v2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/m6w6/pq-gateway.git",
-                "reference": "3aa333045c0bb93b83e87e190b4ed49333d106f0"
+                "reference": "03b28245fb439e82de49cc4337893c5c94319a57"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/m6w6/pq-gateway/zipball/3aa333045c0bb93b83e87e190b4ed49333d106f0",
-                "reference": "3aa333045c0bb93b83e87e190b4ed49333d106f0",
+                "url": "https://api.github.com/repos/m6w6/pq-gateway/zipball/03b28245fb439e82de49cc4337893c5c94319a57",
+                "reference": "03b28245fb439e82de49cc4337893c5c94319a57",
                 "shasum": ""
             },
-            "suggest": {
-                "react/promise": "1.0.*"
+            "require-dev": {
+                "amphp/amp": "^1.0-beta",
+                "react/promise": "~2.2"
             },
             "type": "library",
             "autoload": {
@@ -185,7 +186,7 @@
                 "postgresql",
                 "pq"
             ],
-            "time": "2015-05-08 10:10:49"
+            "time": "2015-05-20 16:16:55"
         },
         {
             "name": "monolog/monolog",
@@ -406,8 +407,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "rdlowrey/auryn": 20,
-        "m6w6/pharext.wiki": 20,
-        "m6w6/pq-gateway": 20
+        "m6w6/pharext.wiki": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

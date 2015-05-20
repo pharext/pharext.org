@@ -24,7 +24,7 @@
 		"league/plates": "~3.1",
 		"rdlowrey/auryn": "dev-master",
 		"m6w6/pharext.wiki": "dev-master",
-		"m6w6/pq-gateway": "dev-master",
+		"m6w6/pq-gateway": "~2.1",
 		"monolog/monolog": "^1.13"
 	}
 }
