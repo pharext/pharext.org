@@ -21,29 +21,29 @@
 </div>
 
 <div class="row">
-	<div class="col-md-6">
+	<div class="col-sm-8">
 		<div class="well">
 			<p><?= $this->e($repo->description) ?></p>
 		</div>
 	</div>
-	<div class="col-md-6">
+	<div class="col-sm-4">
 		<div class="row text-center">
-			<div class="col-md-4">
-				<span title="Number of watchers" class="mega-octicon octicon-eye" aria-hidden="true"></span>
+			<div class="col-sm-4">
+				<span title="Number of watchers" class="octicon octicon-eye" aria-hidden="true"></span>
 				<br>
 				<span class="label label-success">
 					<?= $repo->watchers_count ?> Watchers
 				</span>
 			</div>
-			<div class="col-md-4">
-				<span title="Number of stars" class="mega-octicon octicon-star" aria-hidden="true"></span>
+			<div class="col-sm-4">
+				<span title="Number of stars" class="octicon octicon-star" aria-hidden="true"></span>
 				<br>
 				<span class="label label-primary">
 					<?= $repo->stargazers_count ?> Stars
 				</span>
 			</div>
-			<div class="col-md-4">
-				<span title="Number of forks" class="mega-octicon octicon-repo-forked" aria-hidden="true"></span>
+			<div class="col-sm-4">
+				<span title="Number of forks" class="octicon octicon-repo-forked" aria-hidden="true"></span>
 				<br>
 				<span class="label label-default">
 					<?= $repo->forks_count ?> Forks
@@ -54,12 +54,12 @@
 </div>
 
 <div class="row">
-	<div class="col-md-6">
+	<div class="col-sm-6">
 		<div class="row">
-			<div class="col-md-8">
+			<div class="col-sm-8">
 				<p>Has a <code>config*.m4</code> file?</p>
 			</div>
-			<div class="col-md-4 text-center">
+			<div class="col-sm-4">
 				<p>
 					<?php if (!empty($repo->config_m4)) : ?>
 					<span class="label label-info">YES</span>
@@ -71,10 +71,10 @@
 		</div>
 
 		<div class="row">
-			<div class="col-md-8">
+			<div class="col-sm-8">
 				<p>Has a <code>package*.xml</code> file?</p>
 			</div>
-			<div class="col-md-4 text-center">
+			<div class="col-sm-4">
 				<p>
 					<?php if (!empty($repo->package_xml)) : ?>
 					<span class="label label-info">YES</span>
@@ -86,10 +86,10 @@
 		</div>
 
 		<div class="row">
-			<div class="col-md-8">
+			<div class="col-sm-8">
 				<p>Has a <code>pharext_package.php</code> file?</p>
 			</div>
-			<div class="col-md-4 text-center">
+			<div class="col-sm-4">
 				<p>
 					<?php if (!empty($repo->pharext_package_php)) : ?>
 					<span class="label label-info">YES</span>
@@ -101,10 +101,10 @@
 		</div>
 
 		<div class="row">
-			<div class="col-md-8">
+			<div class="col-sm-8">
 				<p>Is the <code>pharext</code> hook enabled?</p>
 			</div>
-			<div class="col-md-4 text-center">
+			<div class="col-sm-4">
 					<?php if (!empty($hook)) : ?>
 					<span class="label label-info">YES</span>
 					<?php else : ?>
@@ -114,10 +114,10 @@
 		</div>
 	</div>
 
-	<div class="col-md-6">
+	<div class="col-sm-6">
 		<div class="row">
 			<form method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/hook/" . (!empty($hook) ? "upd" : "add")) ?>">
-				<div class="col-md-6">
+				<div class="col-sm-6">
 					<h4>PHARext Options:</h4>
 					<div class="checkbox">
 						<label for="hook-zend">
@@ -132,7 +132,7 @@
 						</label>
 					</div>
 				</div>
-				<div class="col-md-6">
+				<div class="col-sm-6">
 					<h4>Hook Options:</h4>
 						<div class="checkbox">
 							<label for="hook-tag">
@@ -148,14 +148,14 @@
 						</div>
 				</div>
 				<?php if ($this->check($repo)) : ?>
-				<div class="col-md-6">
+				<div class="col-sm-6">
 					<button type="submit" class="btn btn-lg btn-block btn-info">
 						<span class="glyphicon glyphicon-ok-circle"></span>
 						Update Hook
 					</button>
 				</div>
 				<?php else : ?>
-				<div class="col-md-6 col-md-offset-6">
+				<div class="col-sm-6 col-sm-offset-6">
 					<button type="submit" class="btn btn-lg btn-block btn-success">
 						<span class="octicon octicon-plug"></span>
 						Enable Hook
@@ -165,7 +165,7 @@
 			</form>
 			<!-- column wrapping! -->
 			<?php if ($this->check($repo)) : ?>
-			<div class="col-md-6">
+			<div class="col-sm-6">
 				<form method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/hook/del") ?>"> 
 				<button class="btn btn-lg btn-block btn-danger">
 					<span class="glyphicon glyphicon-remove-circle"></span>
@@ -200,7 +200,7 @@
 	</div>
 	<div class="panel-body">
 		<div class="row">
-			<div class="col-md-8">
+			<div class="col-sm-8">
 		<?php if (!empty($v->release)) : ?>
 			<p><?= $this->md($v->release->body) ?></p>
 		<?php endif; ?>
@@ -225,7 +225,7 @@
 			<?php endif; ?>
 		</ul>
 			</div>
-			<div class="col-md-4">
+			<div class="col-sm-4">
 		<?php if (!empty($v->release->assets)) : ?>
 			<ul class="list-inline pull-right">
 				<?php foreach ($v->release->assets as $asset) : ?>
