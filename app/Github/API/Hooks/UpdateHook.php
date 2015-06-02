@@ -20,8 +20,8 @@ class UpdateHook extends \app\Github\API\Call
 			$events[] = "release";
 		}
 		$config = [
-			"zend" => !empty($this->args["conf"]["zend"]),
-			"pecl" => !empty($this->args["conf"]["pecl"]),
+			"zend" => (int)!empty($this->args["conf"]["zend"]),
+			"pecl" => (int)!empty($this->args["conf"]["pecl"]),
 			"url" => $this->config->hook->url,
 			"content_type" => $this->config->hook->content_type,
 			"insecure_ssl" => $this->config->hook->insecure_ssl,

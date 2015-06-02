@@ -72,23 +72,39 @@ class Receive implements Controller
 			$response->getBody()->append("Not published");
 			return;
 		}
+		if (!empty($release->release->assets)) {
+			foreach ($release->release->assets as $asset) {
+				if ($asset->content_type === "application/phar") {
+					/* we've already uploaded the asset when we created the release */
+					return;
+				}
+			}
+		}
 		
-		$this->uploadAssetForRelease($release->release, $release->repository);
+		$this->uploadAssetForRelease($release->release, $release->repository)->send();
 	}
 	
 	private function uploadAssetForRelease($release, $repo) {
 		$this->setTokenForUser($repo->owner->login);
-		$this->github->listHooks($repo->full_name, function($hooks) use($release, $repo) {
+		return $this->github->listHooks($repo->full_name, function($hooks) use($release, $repo) {
 			$repo->hooks = $hooks;
 			$asset = $this->createReleaseAsset($release, $repo);
 			$name = sprintf("%s-%s.ext.phar", $repo->name, $release->tag_name);
 			$url = uri_template($release->upload_url, compact("name"));
-			$this->github->createReleaseAsset($url, $asset, "application/phar", function($json) {
-				$response = $this->app->getResponse();
-				$response->setResponseCode(201);
-				$response->setHeader("Location", $json->url);
+			$this->github->createReleaseAsset($url, $asset, "application/phar", function($json) use($release, $repo) {
+				if ($release->draft) {
+					$this->github->publishRelease($repo->full_name, $release->id, $release->tag_name, function($json) {
+						$response = $this->app->getResponse();
+						$response->setResponseCode(201);
+						$response->setHeader("Location", $json->url);
+					});
+				} else {
+					$response = $this->app->getResponse();
+					$response->setResponseCode(201);
+					$response->setHeader("Location", $json->url);
+				}
 			});
-		})->send();
+		});
 	}
 	
 	private function createReleaseAsset($release, $repo) {
@@ -119,7 +135,7 @@ class Receive implements Controller
 			return;
 		}
 		
-		$this->createReleaseFromTag($create->ref, $create->repository);
+		$this->createReleaseFromTag($create->ref, $create->repository)->send();
 	}
 	
 	private function setTokenForUser($login) {
@@ -139,10 +155,8 @@ class Receive implements Controller
 	
 	private function createReleaseFromTag($tag, $repo) {
 		$this->setTokenForUser($repo->owner->login);
-		$this->github->createRelease($repo->full_name, $tag, function($json) {
-			$response = $this->app->getResponse();
-			$response->setResponseCode(201);
-			$response->setHeader("Location", $json->url);
-		})->send();
+		return $this->github->createRelease($repo->full_name, $tag, function($json) use($repo) {
+			$this->uploadAssetForRelease($json, $repo);
+		});
 	}
 }
