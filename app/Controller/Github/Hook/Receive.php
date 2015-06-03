@@ -67,7 +67,6 @@ class Receive implements Controller
 	function release($release) {
 		if ($release->action !== "published") {
 			$response = $this->app->getResponse();
-			
 			$response->setResponseCode(202);
 			$response->getBody()->append("Not published");
 			return;
@@ -76,6 +75,9 @@ class Receive implements Controller
 			foreach ($release->release->assets as $asset) {
 				if ($asset->content_type === "application/phar") {
 					/* we've already uploaded the asset when we created the release */
+					$response = $this->app->getResponse();
+					$response->setResponseCode(202);
+					$response->getBody()->append("Already published");
 					return;
 				}
 			}
