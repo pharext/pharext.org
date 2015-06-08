@@ -5,6 +5,7 @@ namespace app\Github;
 use app\Github\API;
 use app\Github\Storage;
 use app\Github\Exception;
+use app\Pharext;
 
 use merry\Config;
 
@@ -239,4 +240,30 @@ class API
 		$call = new API\Releases\ListReleaseAssets($this, compact("repo", "id"));
 		return $call($callback);
 	}
+
+	function uploadAssetForRelease($repo, $release, callable $callback) {
+		return $this->listHooks($repo->full_name, function($hooks) use($release, $repo, $callback) {
+			$repo->hooks = $hooks;
+			$hook = $this->checkRepoHook($repo);
+			$phar = new Pharext\Package($repo->clone_url, $release->tag_name, $repo->name, $hook ? $hook->config : null);
+			$name = sprintf("%s-%s.ext.phar", $repo->name, $release->tag_name);
+			$url = uri_template($release->upload_url, compact("name"));
+			$this->createReleaseAsset($url, $phar, "application/phar", function($json) use($release, $repo, $callback) {
+				if ($release->draft) {
+					$this->publishRelease($repo->full_name, $release->id, $release->tag_name, function($json) use($callback) {
+						$callback($json);
+					});
+				} else {
+					$callback($json);
+				}
+			});
+		});
+	}
+
+	function createReleaseFromTag($repo, $tag_name, callable $callback) {
+		return $this->createRelease($repo->full_name, $tag_name, function($json) use($repo, $callback) {
+			$this->uploadAssetForRelease($repo, $json, $callback);
+		});
+	}
+
 }

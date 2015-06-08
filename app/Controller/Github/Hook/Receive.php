@@ -64,18 +64,31 @@ class Receive implements Controller
 		}
 	}
 	
-	function release($release) {
+	private function setTokenForUser($login) {
+		$relations = [
+			$this->accounts->getTokens()->getRelation("accounts"),
+			$this->accounts->getOwners()->getRelation("accounts")
+		];
+		$tokens = $this->accounts->getTokens()->with($relations, [
+			"login=" => $login,
+			"tokens.authority=" => "github",
+		]);
+
+		if (count($tokens)) {
+			$this->github->setToken($tokens->current()->token->get());
+		}
+	}
+
+	private function release($release) {
+		$response = $this->app->getResponse();
+
 		if ($release->action !== "published") {
-			$response = $this->app->getResponse();
 			$response->setResponseCode(202);
 			$response->getBody()->append("Not published");
-			return;
-		}
-		if (!empty($release->release->assets)) {
+		} elseif (!empty($release->release->assets)) {
 			foreach ($release->release->assets as $asset) {
 				if ($asset->content_type === "application/phar") {
 					/* we've already uploaded the asset when we created the release */
-					$response = $this->app->getResponse();
 					$response->setResponseCode(202);
 					$response->getBody()->append("Already published");
 					return;
@@ -83,34 +96,34 @@ class Receive implements Controller
 			}
 		}
 		
-		$this->uploadAssetForRelease($release->release, $release->repository)->send();
+		$this->setTokenForUser($release->repository->owner->login);
+		$this->github->uploadAssetForRelease($release->release, $release->repository, function($json) use($response) {
+			$response->setResponseCode(201);
+			$response->setHeader("Location", $json->url);
+		})->send();
 	}
 	
-	private function uploadAssetForRelease($release, $repo) {
-		$this->setTokenForUser($repo->owner->login);
-		return $this->github->listHooks($repo->full_name, function($hooks) use($release, $repo) {
-			$repo->hooks = $hooks;
-			$asset = $this->createReleaseAsset($release, $repo);
-			$name = sprintf("%s-%s.ext.phar", $repo->name, $release->tag_name);
-			$url = uri_template($release->upload_url, compact("name"));
-			$this->github->createReleaseAsset($url, $asset, "application/phar", function($json) use($release, $repo) {
-				if ($release->draft) {
-					$this->github->publishRelease($repo->full_name, $release->id, $release->tag_name, function($json) {
-						$response = $this->app->getResponse();
-						$response->setResponseCode(201);
-						$response->setHeader("Location", $json->url);
-					});
-				} else {
-					$response = $this->app->getResponse();
-					$response->setResponseCode(201);
-					$response->setHeader("Location", $json->url);
-				}
-			});
-		});
+	private function create($create) {
+		$response = $this->app->getResponse();
+
+		if ($create->ref_type !== "tag") {
+			$response->setResponseCode(202);
+			$response->getBody()->append("Not a tag");
+			return;
+		}
+		
+		$this->setTokenForUser($create->repository->owner->login);
+		$this->github->createReleaseFromTag($create->repository, $create->ref, function($json) use($response) {
+			$response->setResponseCode(201);
+			$response->setHeader("Location", $json->url);
+		})->send();
 	}
 	
 	private function createReleaseAsset($release, $repo) {
 		$hook = $this->github->checkRepoHook($repo);
+		$phar = new Pharext\Package($repo->clone_url, $release->tag_name, $repo->name, $hook->config);
+		return $phar->getFile();
+
 		$dir = (new Task\GitClone($repo->clone_url, $release->tag_name))->run();
 		if (!empty($hook->config->pecl)) {
 			$src = new SoureDir\Pecl($dir);
@@ -127,38 +140,5 @@ class Receive implements Controller
 		$file = (new Task\PharBuild($src, $meta))->run();
 		return $file;
 	}
-	
-	function create($create) {
-		if ($create->ref_type !== "tag") {
-			$response = $this->app->getResponse();
-			
-			$response->setResponseCode(202);
-			$response->getBody()->append("Not a tag");
-			return;
-		}
-		
-		$this->createReleaseFromTag($create->ref, $create->repository)->send();
-	}
-	
-	private function setTokenForUser($login) {
-		$relations = [
-			$this->accounts->getTokens()->getRelation("accounts"),
-			$this->accounts->getOwners()->getRelation("accounts")
-		];
-		$tokens = $this->accounts->getTokens()->with($relations, [
-			"login=" => $login,
-			"tokens.authority=" => "github",
-		]);
-		
-		if (count($tokens)) {
-			$this->github->setToken($tokens->current()->token->get());
-		}
-	}
-	
-	private function createReleaseFromTag($tag, $repo) {
-		$this->setTokenForUser($repo->owner->login);
-		return $this->github->createRelease($repo->full_name, $tag, function($json) use($repo) {
-			$this->uploadAssetForRelease($json, $repo);
-		});
-	}
+
 }

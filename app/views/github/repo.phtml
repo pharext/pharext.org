@@ -226,8 +226,8 @@
 		</ul>
 			</div>
 			<div class="col-sm-4">
-		<?php if (!empty($v->release->assets)) : ?>
 			<ul class="list-inline pull-right">
+			<?php if (!empty($v->release->assets)) : ?>
 				<?php foreach ($v->release->assets as $asset) : ?>
 				<?php if (fnmatch("*.ext.phar", $asset->name)) : ?>
 				<li>
@@ -238,8 +238,16 @@
 				</li>
 				<?php endif; ?>
 				<?php endforeach; ?>
+			<?php else: ?>
+				<form method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/release") ?>">
+					<input type="hidden" name="tag" value="<?= $this->e($v->tag->name) ?>">
+					<button class="btn btn-warning">
+						<span class="octicon octicon-package"></span>
+						Release PHARext package
+					</button>
+				</form>
+			<?php endif; ?>
 			</ul>
-		<?php endif; ?>
 			</div>
 		</div>
 	</div>
