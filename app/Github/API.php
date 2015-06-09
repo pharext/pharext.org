@@ -134,7 +134,7 @@ class API
 		], 0);
 	}
 
-	function fetchToken($code, $state, callable $callback) {
+	function fetchToken($code, $state) {
 		if (!$this->tokens->get("state", $orig_state, true)) {
 			if (isset($orig_state)) {
 				$this->logger->notice("State expired", $orig_state);
@@ -152,12 +152,12 @@ class API
 			"client_id" => $this->config->client->id,
 			"client_secret" => $this->config->client->secret,
 		]);
-		return $call($callback);
+		return $call();
 	}
 	
-	function readAuthUser(callable $callback) {
+	function readAuthUser() {
 		$call = new API\Users\ReadAuthUser($this);
-		return $call($callback);
+		return $call();
 	}
 
 	function listRepos($page, callable $callback) {

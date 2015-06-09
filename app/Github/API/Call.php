@@ -4,9 +4,12 @@ namespace app\Github\API;
 
 use app\Github\API;
 use app\Github\Storage\Item;
+use http\Client\Response;
 use http\QueryString;
 use http\Url;
 use merry\Config;
+
+use React\Promise;
 
 abstract class Call
 {
@@ -41,9 +44,19 @@ abstract class Call
 	protected $result;
 	
 	/**
-	 * Queue this call to the API client
+	 * @var \React\Promise\Deferred
 	 */
-	abstract function enqueue(callable $callback);
+	protected $deferred;
+	
+	/**
+	 * @return Request
+	 */
+	abstract protected function request();
+	
+	/**
+	 * @return array
+	 */
+	abstract protected function response(Response $response);
 	
 	/**
 	 * @param API $api
@@ -53,6 +66,7 @@ abstract class Call
 		$this->api = $api;
 		$this->config = $this->api->getConfig();
 		$this->url = new Url($this->config->api->url, null, 0);
+		$this->deferred = new Promise\Deferred;
 		
 		if ($args) {
 			$this->args = $args;
@@ -62,13 +76,26 @@ abstract class Call
 		}
 	}
 	
-	function __invoke(callable $callback) {
+	/**
+	 * @return \React\Promise\Promise
+	 */
+	function __invoke() {
 		if ($this->readFromCache($this->result)) {
-			call_user_func_array($callback, $this->result);
+			return new Promise\FulfilledPromise($this->result);
 		} else {
-			$this->enqueue($callback);
+			$this->api->getClient()->enqueue(
+				$this->request(),
+				function($response) {
+					try {
+						$this->deferred->resolve($this->response($response));
+					} catch (\Exception $e) {
+						$this->deferred->reject($e);
+					}
+					return true;
+				}
+			);
+			return $this->deferred->promise();
 		}
-		return $this;
 	}
 	
 	/**

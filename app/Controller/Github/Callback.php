@@ -29,11 +29,33 @@ class Callback extends Github
 		} else {
 			$this->github->fetchToken(
 				$this->app->getRequest()->getQuery("code"),
-				$this->app->getRequest()->getQuery("state"),
-				function($token) {
-					$this->github->setToken($token->access_token);
-					$this->github->readAuthUser($this->createUserCallback($token));
-			})->send();
+				$this->app->getRequest()->getQuery("state")
+			)->then(function($result) {
+				list($oauth) = $result;
+				$this->github->setToken($oauth->access_token);
+				return $this->github->readAuthUser()->then(function($result) use($oauth) {
+					list($user) = $result;
+					return [$oauth, $user];
+				});
+			})->then(function($result) {
+				list($oauth, $user) = $result;
+				$tx = $this->accounts->getConnection()->startTransaction();
+
+				if (($cookie = $this->app->getRequest()->getCookie("account"))) {
+					$account = $this->accounts->find(["account=" => $cookie])->current();
+				} elseif (!($account = $this->accounts->byOAuth("github", $oauth->access_token, $user->login))) {
+					$account = $this->accounts->createOAuthAccount("github", $oauth->access_token, $user->login);
+				}
+				$token = $account->updateToken("github", $oauth->access_token, $oauth);
+				$owner = $account->updateOwner("github", $user->login, $user);
+
+				$tx->commit();
+
+				$this->login($account, $token, $owner);
+			})->done();
+			
+			$this->github->getClient()->send();
+			
 			if (isset($this->session->returnto)) {
 				$returnto = $this->session->returnto;
 				unset($this->session->returnto);
@@ -46,21 +68,4 @@ class Callback extends Github
 		$this->app->display("github/callback");
 	}
 	
-	function createUserCallback($oauth) {
-		return function($user) use($oauth) {
-			$tx = $this->accounts->getConnection()->startTransaction();
-
-			if (($cookie = $this->app->getRequest()->getCookie("account"))) {
-				$account = $this->accounts->find(["account=" => $cookie])->current();
-			} elseif (!($account = $this->accounts->byOAuth("github", $oauth->access_token, $user->login))) {
-				$account = $this->accounts->createOAuthAccount("github", $oauth->access_token, $user->login);
-			}
-			$token = $account->updateToken("github", $oauth->access_token, $oauth);
-			$owner = $account->updateOwner("github", $user->login, $user);
-			
-			$tx->commit();
-			
-			$this->login($account, $token, $owner);
-		};
-	}
 }

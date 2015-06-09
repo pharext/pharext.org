@@ -25,6 +25,7 @@
 		"rdlowrey/auryn": "dev-master",
 		"m6w6/pharext.wiki": "dev-master",
 		"m6w6/pq-gateway": "~2.1",
-		"monolog/monolog": "^1.13"
+		"monolog/monolog": "^1.13",
+		"react/promise": "^2.2"
 	}
 }

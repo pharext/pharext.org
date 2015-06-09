@@ -5,23 +5,24 @@ namespace app\Github\API\Users;
 use app\Github\API\Call;
 use app\Github\Exception\RequestException;
 use http\Client\Request;
+use http\Client\Response;
 use http\QueryString;
 
 class ReadAuthToken extends Call
 {
-	function enqueue(callable $callback) {
+	protected function request() {
 		$request = new Request("POST", "https://github.com/login/oauth/access_token", [
 			"Accept" => "application/json",
 		]);
 		$request->getBody()->append(new QueryString($this->args));
-		$this->api->getClient()->enqueue($request, function($response) use($callback) {
-			if ($response->getResponseCode() >= 400 || null === ($json = json_decode($response->getBody()))) {
-				throw new RequestException($response);
-			}
-			$this->result = [$json];
-			$callback($json);
-			return true;
-		});
+		return $request;
+	}
+	
+	protected function response(Response $response) {
+		if ($response->getResponseCode() >= 400 || null === ($json = json_decode($response->getBody()))) {
+			throw new RequestException($response);
+		}
+		return $json;
 	}
 	
 	function getCacheKey() {
