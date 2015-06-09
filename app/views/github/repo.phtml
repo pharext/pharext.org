@@ -239,8 +239,20 @@
 				<?php endif; ?>
 				<?php endforeach; ?>
 			<?php else: ?>
-				<form method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/release") ?>">
+				<form class="form-inline" method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/release") ?>">
 					<input type="hidden" name="tag" value="<?= $this->e($v->tag->name) ?>">
+					<div class="checkbox">
+						<label for="hook-zend">
+							<input id="hook-zend" type="checkbox" name="zend" value="1" <?= (!empty($hook) && !empty($hook->config->zend)) ? "checked":""?>>
+							Mark as a ZendExtension.
+						</label>
+					</div>
+					<div class="checkbox <?= empty($repo->package_xml) ? "disabled text-muted":"" ?>">
+						<label for="hook-pecl">
+							<input id="hook-pecl" type="checkbox" name="pecl" value="1" <?= (!empty($hook) && !empty($hook->config->pecl)) ? "checked":""?> <?= empty($repo->package_xml) ? "disabled":"" ?>>
+							Use PECL package XML file.
+						</label>
+					</div>
 					<button class="btn btn-warning">
 						<span class="octicon octicon-package"></span>
 						Release PHARext package

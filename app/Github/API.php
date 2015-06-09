@@ -241,11 +241,11 @@ class API
 		return $call($callback);
 	}
 
-	function uploadAssetForRelease($repo, $release, callable $callback) {
-		return $this->listHooks($repo->full_name, function($hooks) use($release, $repo, $callback) {
+	function uploadAssetForRelease($repo, $release, $config, callable $callback) {
+		return $this->listHooks($repo->full_name, function($hooks) use($release, $repo, $config, $callback) {
 			$repo->hooks = $hooks;
 			$hook = $this->checkRepoHook($repo);
-			$phar = new Pharext\Package($repo->clone_url, $release->tag_name, $repo->name, $hook ? $hook->config : null);
+			$phar = new Pharext\Package($repo->clone_url, $release->tag_name, $repo->name, $config ?: $hook->config);
 			$name = sprintf("%s-%s.ext.phar", $repo->name, $release->tag_name);
 			$url = uri_template($release->upload_url, compact("name"));
 			$this->createReleaseAsset($url, $phar, "application/phar", function($json) use($release, $repo, $callback) {
@@ -260,9 +260,9 @@ class API
 		});
 	}
 
-	function createReleaseFromTag($repo, $tag_name, callable $callback) {
+	function createReleaseFromTag($repo, $tag_name, $config, callable $callback) {
 		return $this->createRelease($repo->full_name, $tag_name, function($json) use($repo, $callback) {
-			$this->uploadAssetForRelease($repo, $json, $callback);
+			$this->uploadAssetForRelease($repo, $json, $config, $callback);
 		});
 	}
 

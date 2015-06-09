@@ -97,7 +97,7 @@ class Receive implements Controller
 		}
 		
 		$this->setTokenForUser($release->repository->owner->login);
-		$this->github->uploadAssetForRelease($release->release, $release->repository, function($json) use($response) {
+		$this->github->uploadAssetForRelease($release->release, $release->repository, null, function($json) use($response) {
 			$response->setResponseCode(201);
 			$response->setHeader("Location", $json->url);
 		})->send();
@@ -113,7 +113,7 @@ class Receive implements Controller
 		}
 		
 		$this->setTokenForUser($create->repository->owner->login);
-		$this->github->createReleaseFromTag($create->repository, $create->ref, function($json) use($response) {
+		$this->github->createReleaseFromTag($create->repository, $create->ref, null, function($json) use($response) {
 			$response->setResponseCode(201);
 			$response->setHeader("Location", $json->url);
 		})->send();

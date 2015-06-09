@@ -15,17 +15,17 @@ class Release extends Github
 				call_user_func(new RepoCallback($this->github), $repo, $links);
 
 				$this->github->listReleases($repo->full_name, null, function($releases) use($repo) {
-					$tag = $this->app->getRequest()->getForm("tag");
+					$config = $this->app->getRequest()->getForm();
 					foreach ($releases as $r) {
-						if ($r->tag_name === $tag) {
-							$this->github->uploadAssetForRelease($repo, $r, function() use($repo) {
+						if ($r->tag_name === $config->tag) {
+							$this->github->uploadAssetForRelease($repo, $r, $config, function() use($repo) {
 								$this->app->redirect($this->app->getBaseUrl()->mod("./github/" . $repo->full_name));
 							});
 							return;
 						}
 					}
 					
-					$this->github->createReleaseFromTag($repo, $tag, function() use($repo) {
+					$this->github->createReleaseFromTag($repo, $tag, $config, function() use($repo) {
 						$this->app->redirect($this->app->getBaseUrl()->mod("./github/" . $repo->full_name));
 					});
 				});
