@@ -204,42 +204,43 @@
 		<?php if (!empty($v->release)) : ?>
 			<p><?= $this->md($v->release->body) ?></p>
 		<?php endif; ?>
-		<ul class="list-inline">
-			<li>
-				<span class="octicon octicon-tag" title="Tag"></span>
-				<span class="label label-default"><?= $this->e($v->tag->name) ?></span>
-			</li>
+				<ul class="list-inline">
+					<li>
+						<span class="octicon octicon-tag" title="Tag"></span>
+						<span class="label label-default"><?= $this->e($v->tag->name) ?></span>
+					</li>
 
-			<?php if (!empty($v->release)) : ?>
-			<li>
-				<span class="octicon octicon-git-branch" title="Branch"></span>
-				<span class="label label-default"><?= $this->e($v->release->target_commitish) ?></span>
-			</li>
-			<li>
-				<span class="octicon octicon-clock" title="Date"></span>
-				<span class="label label-default">
-					<time datetime="<?= $v->release->published_at ?>">
-						<?= $this->utc($v->release->published_at)->format("Y-m-d H:i T") ?>
-					</time>
-				</span>
-			<?php endif; ?>
-		</ul>
+					<?php if (!empty($v->release)) : ?>
+					<li>
+						<span class="octicon octicon-git-branch" title="Branch"></span>
+						<span class="label label-default"><?= $this->e($v->release->target_commitish) ?></span>
+					</li>
+					<li>
+						<span class="octicon octicon-clock" title="Date"></span>
+						<span class="label label-default">
+							<time datetime="<?= $v->release->published_at ?>">
+								<?= $this->utc($v->release->published_at)->format("Y-m-d H:i T") ?>
+							</time>
+						</span>
+					<?php endif; ?>
+				</ul>
 			</div>
 			<div class="col-sm-4">
-			<ul class="list-inline pull-right">
 			<?php if (!empty($v->release->assets)) : ?>
-				<?php foreach ($v->release->assets as $asset) : ?>
-				<?php if (fnmatch("*.ext.phar", $asset->name)) : ?>
-				<li>
-					<a class="btn btn-success" href="<?= $this->e($asset->browser_download_url) ?>">
-						<span class="octicon octicon-package"></span>
-						<?= $this->e($asset->name) ?>
-					</a>
-				</li>
-				<?php endif; ?>
-				<?php endforeach; ?>
+				<ul class="list-inline pull-right">
+					<?php foreach ($v->release->assets as $asset) : ?>
+					<?php if (fnmatch("*.ext.phar", $asset->name)) : ?>
+					<li>
+						<a class="btn btn-success" href="<?= $this->e($asset->browser_download_url) ?>">
+							<span class="octicon octicon-package"></span>
+							<?= $this->e($asset->name) ?>
+						</a>
+					</li>
+					<?php endif; ?>
+					<?php endforeach; ?>
+				</ul>
 			<?php else: ?>
-				<form class="form-inline" method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/release") ?>">
+				<form class="form-inline pull-right" method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/release") ?>">
 					<input type="hidden" name="tag" value="<?= $this->e($v->tag->name) ?>">
 					<div class="checkbox">
 						<label for="hook-zend">
@@ -259,7 +260,7 @@
 					</button>
 				</form>
 			<?php endif; ?>
-			</ul>
+			
 			</div>
 		</div>
 	</div>
