@@ -39,11 +39,6 @@ abstract class Call
 	protected $query;
 	
 	/**
-	 * @var array
-	 */
-	protected $result;
-	
-	/**
 	 * @var \React\Promise\Deferred
 	 */
 	protected $deferred;
@@ -105,14 +100,6 @@ abstract class Call
 	function __toString() {
 		$parts = explode("\\", get_class($this));
 		return strtolower(end($parts));
-	}
-	
-	/**
-	 * Call Client::send()
-	 */
-	function send() {
-		$this->api->getClient()->send();
-		return $this->result;
 	}
 	
 	/**

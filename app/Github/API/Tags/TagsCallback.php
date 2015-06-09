@@ -14,12 +14,13 @@ class TagsCallback extends Callback
 		$this->repo = $repo;
 	}
 	
-	function __invoke($json, $links = null) {
+	protected function exec($json, $links = null) {
 		settype($this->repo->tags, "object");
 		foreach ($json as $tag) {
 			$name = $tag->name;
 			settype($this->repo->tags->$name, "object");
 			$this->repo->tags->$name->tag = $tag;
 		}
+		return $json;
 	}
 }

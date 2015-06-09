@@ -27,34 +27,7 @@ class Callback extends Github
 				"error" => $this->app->getRequest()->getQuery("error_description")
 			]);
 		} else {
-			$this->github->fetchToken(
-				$this->app->getRequest()->getQuery("code"),
-				$this->app->getRequest()->getQuery("state")
-			)->then(function($result) {
-				list($oauth) = $result;
-				$this->github->setToken($oauth->access_token);
-				return $this->github->readAuthUser()->then(function($result) use($oauth) {
-					list($user) = $result;
-					return [$oauth, $user];
-				});
-			})->then(function($result) {
-				list($oauth, $user) = $result;
-				$tx = $this->accounts->getConnection()->startTransaction();
-
-				if (($cookie = $this->app->getRequest()->getCookie("account"))) {
-					$account = $this->accounts->find(["account=" => $cookie])->current();
-				} elseif (!($account = $this->accounts->byOAuth("github", $oauth->access_token, $user->login))) {
-					$account = $this->accounts->createOAuthAccount("github", $oauth->access_token, $user->login);
-				}
-				$token = $account->updateToken("github", $oauth->access_token, $oauth);
-				$owner = $account->updateOwner("github", $user->login, $user);
-
-				$tx->commit();
-
-				$this->login($account, $token, $owner);
-			})->done();
-			
-			$this->github->getClient()->send();
+			$this->validateUser();
 			
 			if (isset($this->session->returnto)) {
 				$returnto = $this->session->returnto;
@@ -68,4 +41,37 @@ class Callback extends Github
 		$this->app->display("github/callback");
 	}
 	
+	private function validateUser() {
+		$this->github->fetchToken(
+			$this->app->getRequest()->getQuery("code"),
+			$this->app->getRequest()->getQuery("state")
+		)->then(function($result) {
+			list($oauth) = $result;
+			$this->github->setToken($oauth->access_token);
+			return $this->github->readAuthUser()->then(function($result) use($oauth) {
+				list($user) = $result;
+				return $this->persistUser($oauth, $user);
+			});
+		})->done(function($result) {
+			$this->login(...$result);
+		});
+
+		$this->github->getClient()->send();
+	}
+	
+	private function persistUser($oauth, $user) {
+		$tx = $this->accounts->getConnection()->startTransaction();
+
+		if (($cookie = $this->app->getRequest()->getCookie("account"))) {
+			$account = $this->accounts->find(["account=" => $cookie])->current();
+		} elseif (!($account = $this->accounts->byOAuth("github", $oauth->access_token, $user->login))) {
+			$account = $this->accounts->createOAuthAccount("github", $oauth->access_token, $user->login);
+		}
+		$token = $account->updateToken("github", $oauth->access_token, $oauth);
+		$owner = $account->updateOwner("github", $user->login, $user);
+
+		$tx->commit();
+
+		return [$account, $token, $owner];
+	}
 }

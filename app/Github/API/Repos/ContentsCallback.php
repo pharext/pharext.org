@@ -14,7 +14,7 @@ class ContentsCallback extends Callback
 		$this->repo = $repo;
 	}
 	
-	function __invoke($json, $links = null) {
+	protected function exec($json, $links = null) {
 		foreach ($json as $entry) {
 			if ($entry->type !== "file" || $entry->size <= 0) {
 				continue;
@@ -27,5 +27,6 @@ class ContentsCallback extends Callback
 				$this->repo->pharext_package_php = $entry->name;
 			}
 		}
+		return $json;
 	}
 }

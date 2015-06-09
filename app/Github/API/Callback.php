@@ -8,9 +8,13 @@ abstract class Callback
 {
 	protected $api;
 	
-	abstract function __invoke($json, $links = null);
+	abstract protected function exec($json, $links = null);
 	
 	function __construct(API $api) {
 		$this->api = $api;
+	}
+	
+	function __invoke($result) {
+		return $this->exec(...$result);
 	}
 }

@@ -14,15 +14,19 @@ class ReleasesCallback extends Callback
 		$this->repo = $repo;
 	}
 	
-	function __invoke($json, $links = null) {
+	protected function exec($json, $links = null) {
 		settype($this->repo->tags, "object");
 		foreach ($json as $release) {
 			$tag = $release->tag_name;
 			settype($this->repo->tags->$tag, "object");
 			$this->repo->tags->$tag->release = $release;
-			$this->api->listReleaseAssets($this->repo->full_name, $release->id, function($assets) use($release) {
-				$release->assets = $assets;
+			$this->api->listReleaseAssets(
+				$this->repo->full_name, 
+				$release->id
+			)->done(function($result) use($release) {
+				list($release->assets) = $result;
 			});
 		}
+		return $json;
 	}
 }

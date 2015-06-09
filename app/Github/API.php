@@ -46,6 +46,12 @@ class API
 	 * @var \Psr\Log\LoggerInterface;
 	 */
 	private $logger;
+	
+	/**
+	 * Queued promises
+	 * @var array
+	 */
+	private $queue;
 
 	function __construct(Config $config, LoggerInterface $logger, Storage $tokens = null, Storage $cache = null) {
 		$this->logger = $logger;
@@ -147,27 +153,34 @@ class API
 			throw new Exception\StateMismatch($orig_state->getValue(), $state);
 		}
 		
-		$call = new API\Users\ReadAuthToken($this, [
+		return $this->queue(new API\Users\ReadAuthToken($this, [
 			"code" => $code,
 			"client_id" => $this->config->client->id,
 			"client_secret" => $this->config->client->secret,
-		]);
-		return $call();
+		]));
+	}
+	
+	function queue(API\Call $call) {
+		return $this->queue[] = $call();
+	}
+	
+	function drain() {
+		$queue = $this->queue;
+		$this->queue = array();
+		$this->client->send();
+		return $queue;
 	}
 	
 	function readAuthUser() {
-		$call = new API\Users\ReadAuthUser($this);
-		return $call();
+		return $this->queue(new API\Users\ReadAuthUser($this));
 	}
 
-	function listRepos($page, callable $callback) {
-		$call = new API\Repos\ListRepos($this, compact("page"));
-		return $call($callback);
+	function listRepos($page) {
+		return $this->queue(new API\Repos\ListRepos($this, compact("page")));
 	}
 
-	function readRepo($repo, callable $callback) {
-		$call = new API\Repos\ReadRepo($this, compact("repo"));
-		return $call($callback);
+	function readRepo($repo) {
+		return $this->queue(new API\Repos\ReadRepo($this, compact("repo")));
 	}
 
 	/**
@@ -176,7 +189,7 @@ class API
 	 * @return stdClass hook
 	 */
 	function checkRepoHook($repo) {
-		if ($repo->hooks) {
+		if (!empty($repo->hooks)) {
 			foreach ($repo->hooks as $hook) {
 				if ($hook->name === "web" && $hook->config->url === $this->config->hook->url) {
 					return $hook;
@@ -186,83 +199,71 @@ class API
 		return null;
 	}
 
-	function listHooks($repo, callable $callback) {
-		$call = new API\Hooks\ListHooks($this, compact("repo"));
-		return $call($callback);
+	function listHooks($repo) {
+		return $this->queue(new API\Hooks\ListHooks($this, compact("repo")));
 	}
 
-	function listReleases($repo, $page, callable $callback) {
-		$call = new API\Releases\ListReleases($this, compact("repo", "page"));
-		return $call($callback);
+	function listReleases($repo, $page) {
+		return $this->queue(new API\Releases\ListReleases($this, compact("repo", "page")));
 	}
 
-	function listTags($repo, $page, callable $callback) {
-		$call = new API\Tags\ListTags($this, compact("repo", "page"));
-		return $call($callback);
+	function listTags($repo, $page) {
+		return $this->queue(new API\Tags\ListTags($this, compact("repo", "page")));
 	}
 	
-	function readContents($repo, $path, callable $callback) {
-		$call = new API\Repos\ReadContents($this, compact("repo", "path"));
-		return $call($callback);
+	function readContents($repo, $path = null) {
+		return $this->queue(new API\Repos\ReadContents($this, compact("repo", "path")));
 	}
 	
-	function createRepoHook($repo, $conf, callable $callback) {
-		$call = new API\Hooks\CreateHook($this, compact("repo", "conf"));
-		return $call($callback);
+	function createRepoHook($repo, $conf) {
+		return $this->queue(new API\Hooks\CreateHook($this, compact("repo", "conf")));
 	}
 	
-	function updateRepoHook($repo, $id, $conf, callable $callback) {
-		$call = new API\Hooks\UpdateHook($this, compact("repo", "id", "conf"));
-		return $call($callback);
+	function updateRepoHook($repo, $id, $conf) {
+		return $this->queue(new API\Hooks\UpdateHook($this, compact("repo", "id", "conf")));
 	}
 	
-	function deleteRepoHook($repo, $id, callable $callback) {
-		$call = new API\Hooks\DeleteHook($this, compact("repo", "id"));
-		return $call($callback);
+	function deleteRepoHook($repo, $id) {
+		return $this->queue(new API\Hooks\DeleteHook($this, compact("repo", "id")));
 	}
 	
-	function createRelease($repo, $tag, callable $callback) {
-		$call = new API\Releases\CreateRelease($this, compact("repo", "tag"));
-		return $call($callback);
+	function createRelease($repo, $tag) {
+		return $this->queue(new API\Releases\CreateRelease($this, compact("repo", "tag")));
 	}
 
-	function publishRelease($repo, $id, $tag, callable $callback) {
-		$call = new API\Releases\PublishRelease($this, compact("repo", "id", "tag"));
-		return $call($callback);
+	function publishRelease($repo, $id, $tag) {
+		return $this->queue(new API\Releases\PublishRelease($this, compact("repo", "id", "tag")));
 	}
 
-	function createReleaseAsset($url, $asset, $type, callable $callback) {
-		$call = new API\Releases\CreateReleaseAsset($this, compact("url", "asset", "type"));
-		return $call($callback);
+	function createReleaseAsset($url, $asset, $type) {
+		return $this->queue(new API\Releases\CreateReleaseAsset($this, compact("url", "asset", "type")));
 	}
 	
-	function listReleaseAssets($repo, $id, callable $callback) {
-		$call = new API\Releases\ListReleaseAssets($this, compact("repo", "id"));
-		return $call($callback);
+	function listReleaseAssets($repo, $id) {
+		return $this->queue(new API\Releases\ListReleaseAssets($this, compact("repo", "id")));
 	}
 
-	function uploadAssetForRelease($repo, $release, $config, callable $callback) {
-		return $this->listHooks($repo->full_name, function($hooks) use($release, $repo, $config, $callback) {
-			$repo->hooks = $hooks;
+	function uploadAssetForRelease($repo, $release, $config) {
+		return $this->listHooks($repo->full_name)->then(function($result) use($release, $repo, $config) {
+			list($repo->hooks) = $result;
 			$hook = $this->checkRepoHook($repo);
 			$phar = new Pharext\Package($repo->clone_url, $release->tag_name, $repo->name, $config ?: $hook->config);
 			$name = sprintf("%s-%s.ext.phar", $repo->name, $release->tag_name);
 			$url = uri_template($release->upload_url, compact("name"));
-			$this->createReleaseAsset($url, $phar, "application/phar", function($json) use($release, $repo, $callback) {
-				if ($release->draft) {
-					$this->publishRelease($repo->full_name, $release->id, $release->tag_name, function($json) use($callback) {
-						$callback($json);
-					});
-				} else {
-					$callback($json);
-				}
-			});
+			$promise = $this->createReleaseAsset($url, $phar, "application/phar");
+			if ($release->draft) {
+				return $promise->then(function($result) use($release, $repo) {
+					return $this->publishRelease($repo->full_name, $release->id, $release->tag_name);
+				});
+			}
+			return $promise;
 		});
 	}
 
-	function createReleaseFromTag($repo, $tag_name, $config, callable $callback) {
-		return $this->createRelease($repo->full_name, $tag_name, function($json) use($repo, $callback) {
-			$this->uploadAssetForRelease($repo, $json, $config, $callback);
+	function createReleaseFromTag($repo, $tag_name, $config) {
+		return $this->createRelease($repo->full_name, $tag_name)->then(function($result) use($repo, $config) {
+			list($release) = $result;
+			return $this->uploadAssetForRelease($repo, $release, $config);
 		});
 	}
 

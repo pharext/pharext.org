@@ -14,7 +14,7 @@ class HooksCallback extends Callback
 		$this->repo = $repo;
 	}
 	
-	function __invoke($json, $links = null) {
-		$this->repo->hooks = $json;
+	function exec($json, $links = null) {
+		return $this->repo->hooks = $json;
 	}
 }
