@@ -7,9 +7,6 @@ use app\Github\API;
 use app\Model\Accounts;
 use app\Web;
 use http\Params;
-use pharext\Task;
-use pharext\Metadata;
-use pharext\SourceDir;
 
 class Receive implements Controller
 {
@@ -97,10 +94,15 @@ class Receive implements Controller
 		}
 		
 		$this->setTokenForUser($release->repository->owner->login);
-		$this->github->uploadAssetForRelease($release->release, $release->repository, null, function($json) use($response) {
+		$this->github->uploadAssetForRelease(
+			$release->release,
+			$release->repository
+		)->done(function($result) use($response) {
+			list($created) = $result;
 			$response->setResponseCode(201);
-			$response->setHeader("Location", $json->url);
-		})->send();
+			$response->setHeader("Location", $created->url);
+		});
+		$this->github->drain();
 	}
 	
 	private function create($create) {
@@ -113,32 +115,14 @@ class Receive implements Controller
 		}
 		
 		$this->setTokenForUser($create->repository->owner->login);
-		$this->github->createReleaseFromTag($create->repository, $create->ref, null, function($json) use($response) {
+		$this->github->createReleaseFromTag(
+			$create->repository, 
+			$create->ref
+		)->done(function($result) use($response) {
+			list($created) = $result;
 			$response->setResponseCode(201);
-			$response->setHeader("Location", $json->url);
-		})->send();
+			$response->setHeader("Location", $created->url);
+		});
+		$this->github->drain();
 	}
-	
-	private function createReleaseAsset($release, $repo) {
-		$hook = $this->github->checkRepoHook($repo);
-		$phar = new Pharext\Package($repo->clone_url, $release->tag_name, $repo->name, $hook->config);
-		return $phar->getFile();
-
-		$dir = (new Task\GitClone($repo->clone_url, $release->tag_name))->run();
-		if (!empty($hook->config->pecl)) {
-			$src = new SoureDir\Pecl($dir);
-		} else {
-			$src = new SourceDir\Git($dir);
-		}
-		$meta = Metadata::all() + [
-			"name" => $repo->name,
-			"release" => $release->tag_name,
-			"license" => $src->getLicense(),
-			"stub" => "pharext_installer.php",
-			"type" => !empty($hook->config->zend) ? "zend_extension" : "extension",
-		];
-		$file = (new Task\PharBuild($src, $meta))->run();
-		return $file;
-	}
-
 }

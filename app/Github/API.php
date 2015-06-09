@@ -243,11 +243,15 @@ class API
 		return $this->queue(new API\Releases\ListReleaseAssets($this, compact("repo", "id")));
 	}
 
-	function uploadAssetForRelease($repo, $release, $config) {
+	function uploadAssetForRelease($repo, $release, $config = null) {
 		return $this->listHooks($repo->full_name)->then(function($result) use($release, $repo, $config) {
 			list($repo->hooks) = $result;
-			$hook = $this->checkRepoHook($repo);
-			$phar = new Pharext\Package($repo->clone_url, $release->tag_name, $repo->name, $config ?: $hook->config);
+			$phar = new Pharext\Package(
+				$repo->clone_url, 
+				$release->tag_name, 
+				$repo->name, 
+				$config ?: (array) $this->checkRepoHook($repo)->config
+			);
 			$name = sprintf("%s-%s.ext.phar", $repo->name, $release->tag_name);
 			$url = uri_template($release->upload_url, compact("name"));
 			$promise = $this->createReleaseAsset($url, $phar, "application/phar");
@@ -260,7 +264,7 @@ class API
 		});
 	}
 
-	function createReleaseFromTag($repo, $tag_name, $config) {
+	function createReleaseFromTag($repo, $tag_name, $config = null) {
 		return $this->createRelease($repo->full_name, $tag_name)->then(function($result) use($repo, $config) {
 			list($release) = $result;
 			return $this->uploadAssetForRelease($repo, $release, $config);

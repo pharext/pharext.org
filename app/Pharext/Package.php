@@ -12,7 +12,7 @@ class Package
 
 	function __construct($git_url, $tag_name, $pkg_name, $options) {
 		$dir = (new Task\GitClone($git_url, $tag_name))->run();
-		$src = !empty($options->pecl)
+		$src = !empty($options["pecl"])
 			? new SourceDir\Pecl($dir)
 			: new SourceDir\Git($dir);
 		$meta = Metadata::all() + [
@@ -20,7 +20,7 @@ class Package
 			"release" => $tag_name,
 			"license" => $src->getLicense(),
 			"stub" => "pharext_installer.php",
-			"type" => !empty($options->zend) ? "zend_extension" : "extension",
+			"type" => !empty($options["zend"]) ? "zend_extension" : "extension",
 		];
 		$this->file = (new Task\PharBuild($src, $meta))->run();
 	}
