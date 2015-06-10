@@ -17,7 +17,7 @@ class RepoHook extends Github
 				]));
 			} else {
 				$this->changeHook($args)->done(function() use($args) {
-					$this->redirectBack($args["owner"]."/".$args["repo"]);
+					$this->redirectBack($args["owner"]."/".$args["name"]);
 				});
 				$this->github->drain();
 			}
