@@ -16,71 +16,63 @@ class RepoHook extends Github
 					"query" => "modal=hook&hook=" . $args["action"]
 				]));
 			} else {
-				switch ($args["action"]) {
-				case "upd":
-					$this->updateHook($args["owner"], $args["name"]);
-					break;
-				
-				case "add":
-					$this->addHook($args["owner"], $args["name"]);
-					break;
-
-				case "del":
-					$this->delHook($args["owner"], $args["name"]);
-					break;
-				}
+				$this->changeHook($args)->done(function() use($args) {
+					$this->redirectBack($args["owner"]."/".$args["repo"]);
+				});
+				$this->github->drain();
 			}
 		}
 	}
+
+	function changeHook($args) {
+		switch ($args["action"]) {
+		case "upd":
+			return $this->updateHook($args["owner"] ."/". $args["name"]);
+		case "add":
+			return $this->addHook($args["owner"] ."/". $args["name"]);
+		case "del":
+			return $this->delHook($args["owner"] ."/". $args["name"]);
+		default:
+			throw new \Exception("Unknown action ".$args["action"]);
+		}
+	}
 	
-	function addHook($owner, $repo) {
+	function addHook($repo_name) {
 		$hook_conf = $this->app->getRequest()->getForm();
-		$this->github->createRepoHook("$owner/$repo", $hook_conf)->then(function($hook) use($owner, $repo) {
-			$call = new ListHooks($this->github, ["repo" => "$owner/$repo", "fresh" => true]);
-			$this->github->queue($call)->then(function() use($owner, $repo) {
-				$this->redirectBack("$owner/$repo");
-			});
+		$listhooks = new ListHooks($this->github, ["repo" => $repo_name]);
+		return $this->github->createRepoHook($repo_name, $hook_conf)->then(function() use($listhooks) {
+			$listhooks->dropFromCache();
 		});
-		$this->github->drain();
 	}
 	
-	function updateHook($owner, $repo) {
-		$this->github->readRepo("$owner/$repo")->then(function($result) {
-			list($repo) = $result;
-			$call = new ListHooks($this->github, ["repo" => $repo->full_name]);
-			$this->github->queue($call)->then(function($result) use($repo, $call) {
-				list($repo->hooks) = $result;
-				if (($hook = $this->github->checkRepoHook($repo))) {
-					$hook_conf = $this->app->getRequest()->getForm();
-					$this->github->updateRepoHook($repo->full_name, $hook->id, $hook_conf)->then(function($hook_result) use($repo, $hook, $result, $call) {
-						list($changed_hook) = $hook_result;
-						foreach ($changed_hook as $key => $val) {
-							$hook->$key = $val;
-						}
-						$call->saveToCache($result);
-						$this->redirectBack($repo->full_name);
-					});
-				}
-			});
+	function updateHook($repo_name) {
+		$listhooks = new ListHooks($this->github, ["repo" => $repo_name]);
+		return $this->github->queue($listhooks)->then(function($result) use($repo_name) {
+			list($hooks) = $result;
+
+			if (!($hook = $this->github->checkHook($hooks))) {
+				throw new \Exception("Hook is not set");
+			}
+
+			return $this->github->updateRepoHook($repo_name, $hook->id, $this->app->getRequest()->getForm());
+		})->then(function() use($listhooks) {
+			$listhooks->dropFromCache();
 		});
-		$this->github->drain();
 	}
 	
-	function delHook($owner, $repo) {
-		$this->github->readRepo("$owner/$repo")->then(function($result) {
-			list($repo) = $result;
-			$call = new ListHooks($this->github, ["repo" => $repo->full_name]);
-			$this->github->queue($call)->then(function($result) use($repo, $call) {
-				list($repo->hooks) = $result;
-				if (($hook = $this->github->checkRepoHook($repo))) {
-					$this->github->deleteRepoHook($repo->full_name, $hook->id)->then(function() use($repo, $call) {
-						$call->dropFromCache();
-						$this->redirectBack($repo->full_name);
-					});
-				}
-			});
+	function delHook($repo_name) {
+		$listhooks = new ListHooks($this->github, ["repo" => $repo_name]);
+		return $this->github->queue($listhooks)->then(function($result) use($repo_name) {
+			list($hooks) = $result;
+
+			if (!($hook = $this->github->checkHook($hooks))) {
+				throw new \Exception("Hook is not set");
+			}
+			
+			return $this->github->deleteRepoHook($repo_name, $hook->id);
+		})->then(function() use($listhooks) {
+			$listhooks->dropFromCache();
 		});
-		$this->github->drain();
 	}
 	
 	function redirectBack($repo) {

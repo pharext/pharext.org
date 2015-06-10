@@ -51,7 +51,12 @@ class Receive implements Controller
 			case "create":
 			case "release":
 				if (($json = json_decode($request->getBody()))) {
-					$this->$evt($json);
+					$this->$evt($json)->done(function($result) use($response) {
+						list($created) = $result;
+						$response->setResponseCode(201);
+						$response->setHeader("Location", $created->url);
+					});
+					$this->github->drain();
 				} else {
 					$response->setResponseCode(415);
 					$response->setContentType($request->getHeader("Content-Type"));
@@ -94,15 +99,10 @@ class Receive implements Controller
 		}
 		
 		$this->setTokenForUser($release->repository->owner->login);
-		$this->github->uploadAssetForRelease(
+		return $this->github->uploadAssetForRelease(
 			$release->release,
 			$release->repository
-		)->done(function($result) use($response) {
-			list($created) = $result;
-			$response->setResponseCode(201);
-			$response->setHeader("Location", $created->url);
-		});
-		$this->github->drain();
+		);
 	}
 	
 	private function create($create) {
@@ -115,14 +115,9 @@ class Receive implements Controller
 		}
 		
 		$this->setTokenForUser($create->repository->owner->login);
-		$this->github->createReleaseFromTag(
+		return $this->github->createReleaseFromTag(
 			$create->repository, 
 			$create->ref
-		)->done(function($result) use($response) {
-			list($created) = $result;
-			$response->setResponseCode(201);
-			$response->setHeader("Location", $created->url);
-		});
-		$this->github->drain();
+		);
 	}
 }

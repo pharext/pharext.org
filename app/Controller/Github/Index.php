@@ -17,6 +17,7 @@ class Index extends Github
 				list(list($repos, $links)) = $results;
 				$this->app->display("github/index", compact("repos", "links"));
 			});
+			
 			$this->github->drain();
 		}
 	}

@@ -18,6 +18,7 @@ class Repo extends Github
 
 				$this->app->getView()->addData(compact("owner", "name", "repo", "hook"));
 			});
+			
 			$this->github->drain();
 		}
 

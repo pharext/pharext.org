@@ -45,18 +45,16 @@ class Callback extends Github
 		$this->github->fetchToken(
 			$this->app->getRequest()->getQuery("code"),
 			$this->app->getRequest()->getQuery("state")
-		)->then(function($result) {
+		)->then(function($result) use (&$oauth) {
 			list($oauth) = $result;
 			$this->github->setToken($oauth->access_token);
-			return $this->github->readAuthUser()->then(function($result) use($oauth) {
-				list($user) = $result;
-				return $this->persistUser($oauth, $user);
-			});
-		})->done(function($result) {
-			$this->login(...$result);
+			return $this->github->readAuthUser();
+		})->done(function($result) use(&$oauth) {
+			list($user) = $result;
+			$this->login(...$this->persistUser($oauth, $user));
 		});
 
-		$this->github->getClient()->send();
+		$this->github->drain();
 	}
 	
 	private function persistUser($oauth, $user) {

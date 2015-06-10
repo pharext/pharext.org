@@ -28,6 +28,7 @@ class Release extends Github
 			});
 			
 			$this->github->drain();
+			
 			$hook = $this->github->checkRepoHook($repo);
 			$this->app->getView()->addData(compact("owner", "name", "repo", "hook"));
 

@@ -184,17 +184,29 @@ class API
 	}
 
 	/**
+	 * Check if the pharext webhook is set and return it
+	 * @param array $hooks
+	 * @return stdClass hook
+	 */
+	function checkHook($hooks) {
+		if (!empty($hooks)) {
+			foreach ($hooks as $hook) {
+				if ($hook->name === "web" && $hook->config->url === $this->config->hook->url) {
+					return $hook;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Check if the pharext webhook is set for the repo and return it
 	 * @param object $repo
 	 * @return stdClass hook
 	 */
 	function checkRepoHook($repo) {
 		if (!empty($repo->hooks)) {
-			foreach ($repo->hooks as $hook) {
-				if ($hook->name === "web" && $hook->config->url === $this->config->hook->url) {
-					return $hook;
-				}
-			}
+			return $this->checkHook($repo->hooks);
 		}
 		return null;
 	}
