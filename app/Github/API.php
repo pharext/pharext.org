@@ -264,7 +264,7 @@ class API
 				$repo->name, 
 				$config ?: (array) $this->checkRepoHook($repo)->config
 			);
-			$name = sprintf("%s-%s.ext.phar", $repo->name, $release->tag_name);
+			$name = $phar->build();
 			$url = uri_template($release->upload_url, compact("name"));
 			$promise = $this->createReleaseAsset($url, $phar, "application/phar");
 			if ($release->draft) {
