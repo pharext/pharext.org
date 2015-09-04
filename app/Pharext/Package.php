@@ -44,10 +44,12 @@ class Package
 			"name" => $this->name,
 			"release" => $this->release,
 			"license" => $this->source->getLicense(),
-			"stub" => "pharext_installer.php",
 			"type" => $this->zend ? "zend_extension" : "extension",
 		];
-		$this->file = (new Task\PharBuild($this->source, $meta))->run();
+		/* needed for the packager, so the pharstub task can find includes */
+		set_include_path(__DIR__."/../../vendor/m6w6/pharext/src:".get_include_path());
+		$stub = __DIR__."/../../vendor/m6w6/pharext/src/pharext_installer.php";
+		$this->file = (new Task\PharBuild($this->source, $stub, $meta))->run();
 		
 		return sprintf("%s-%s.ext.phar", $this->name, $this->release);
 	}
