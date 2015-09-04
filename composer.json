@@ -22,7 +22,7 @@
 		"m6w6/merry": "~1.1",
 		"nikic/fast-route": "0.4.*",
 		"league/plates": "~3.1",
-		"rdlowrey/auryn": "dev-master",
+		"rdlowrey/auryn": "^1.1",
 		"m6w6/pharext.wiki": "dev-master",
 		"m6w6/pq-gateway": "~2.1",
 		"monolog/monolog": "^1.13",
