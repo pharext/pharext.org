@@ -51,12 +51,14 @@ class Receive implements Controller
 			case "create":
 			case "release":
 				if (($json = json_decode($request->getBody()))) {
-					$this->$evt($json)->done(function($result) use($response) {
-						list($created) = $result;
-						$response->setResponseCode(201);
-						$response->setHeader("Location", $created->url);
-					});
-					$this->github->drain();
+					if (($queue = $this->$evt($json))) {
+						$queue->done(function($result) use($response) {
+							list($created) = $result;
+							$response->setResponseCode(201);
+							$response->setHeader("Location", $created->url);
+						});
+						$this->github->drain();
+					}
 				} else {
 					$response->setResponseCode(415);
 					$response->setContentType($request->getHeader("Content-Type"));
