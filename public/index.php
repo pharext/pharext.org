@@ -4,6 +4,7 @@ namespace app;
 
 try {
 	$bootstrap = require "../app/bootstrap.php";
+	/* @var $injector \auryn\Injector */
 	$injector = $bootstrap(["config", "github", "plates", "model", "web"]);
 	return $injector->execute(Web::class);
 } catch (\Exception $e) {
