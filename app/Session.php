@@ -4,11 +4,12 @@ namespace app;
 
 use ArrayAccess;
 use http\Env\Response;
+use http\Env\Request;
 use http\Params;
 
 class Session implements ArrayAccess
 {
-	function __construct(Config $config, BaseUrl $baseUrl, Response $response) {
+	function __construct(Config $config, BaseUrl $baseUrl, Request $request, Response $response, Logger $logger) {
 		ini_set("session.cookie_path", $baseUrl->path);
 		foreach ($config->session as $key => $val) {
 			ini_set("session.$key", $val);
@@ -24,6 +25,9 @@ class Session implements ArrayAccess
 			])
 		);
 		session_start();
+		$logger->debug(session_id(), [
+			"url" =>  $request->getRequestUrl(),
+		]);
 	}
 
 	function regenerateId() {
