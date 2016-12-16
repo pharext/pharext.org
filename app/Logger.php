@@ -1,13 +1,12 @@
 <?php
 
-namespace app\Github;
+namespace app;
 
 use app\Config;
 
 class Logger extends \Monolog\Logger
 {
-	function __construct(Config $config) {
-		$channel = $config->github->log;
+	function __construct(Config $config, $channel) {
 		parent::__construct($channel);
 		foreach ($config->log->$channel as $logger) {
 			$reflection = new \ReflectionClass("Monolog\\Handler\\" . $logger->handler);
