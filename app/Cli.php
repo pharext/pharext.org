@@ -28,6 +28,7 @@ class Cli
 		}
 		
 		if ($this->args["help"] || !array_filter($this->args->toArray())) {
+			//var_dump($this->args->toArray(), $this->args[0]);
 			$this->help($prog);
 			exit;
 		}
@@ -37,15 +38,17 @@ class Cli
 				exit(-1);
 			}
 		}
-		
-		if ($this->args["ngrok"]) {
+
+		switch($this->args[0]) {
+		case "ngrok":
 			$exec(Cli\Ngrok::class);
-		}
-		if ($this->args["initdb"]) {
+			break;
+		case "initdb":
 			$exec(Cli\Initdb::class);
-		}
-		if ($this->args["gen-models"]) {
+			break;
+		case "gen-models":
 			$exec(Cli\GenModels::class);
+			break;
 		}
 	}
 	
@@ -58,6 +61,7 @@ class Cli
 	 * @param string $prog
 	 */
 	public function help($prog) {
+		return print new Args\Help($prog, $this->args);
 		printf("Usage:\n\n  \$ %s", $prog);
 		
 		$flags = [];
