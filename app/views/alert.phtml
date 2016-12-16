@@ -3,10 +3,10 @@
 	<strong><?= nl2br($this->e($exception->getMessage())) ?></strong>
 	(<?= $exception->getCode() ?>)<br>
 	<?php if ($exception instanceof \app\Github\Exception\TokenException) : ?>
-		You might want to try to <a href="<?= $baseUrl->mod("./github/signin") ?>">renew your token</a>!
+		You might want to try to <a href="<?= $baseUrl->mod(":./github/signin") ?>">renew your token</a>!
 	<?php endif; ?>
 	<?php if ($exception instanceof \app\Github\Exception\StateException) : ?>
-		You might want to try to <a href="<?= $baseUrl->mod("./github/signin") ?>">try again</a>!
+		You might want to try to <a href="<?= $baseUrl->mod(":./github/signin") ?>">try again</a>!
 	<?php endif; ?>
 </div>
 

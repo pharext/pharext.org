@@ -28,7 +28,7 @@
 				<?php endif; ?>
 			</td>
 			<th>
-				<a href="<?= $baseUrl->mod("./github/repo/".$repo->full_name) ?>">
+				<a href="<?= $baseUrl->mod(":./github/repo/".$repo->full_name) ?>">
 					<big class="text-primary" title="<?= $this->e($repo->description) ?>"><?= $this->e($repo->name) ?></big>
 				</a>
 				<br>
@@ -37,7 +37,7 @@
 			<td class="text-right"><time datetime="<?= $this->e($repo->pushed_at) ?>"><?= $this->e($this->utc($repo->pushed_at)->format("Y-m-d H:i T")) ?></time></td>
 			<td class="text-center">
 				<?php if ($this->check($repo)) : ?>
-				<form class="form" style="display: inline-block" method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/hook/del") ?>"> 
+				<form class="form" style="display: inline-block" method="post" action="<?= $baseUrl->mod(":./github/repo/". $repo->full_name ."/hook/del") ?>">
 					<input type="hidden" name="returnback" value="1">
 					<button type="submit" class="btn btn-block btn-danger">
 						<span class="glyphicon glyphicon-remove"></span>
@@ -45,7 +45,7 @@
 					</button>
 				</form>
 				<?php else : ?>
-				<form class="form-inline" style="display: inline-block" method="post" action="<?= $baseUrl->mod("./github/repo/". $repo->full_name ."/hook/add") ?>">
+				<form class="form-inline" style="display: inline-block" method="post" action="<?= $baseUrl->mod(":./github/repo/". $repo->full_name ."/hook/add") ?>">
 						<div class="checkbox">
 							<label for="hook-tag">
 								<input id="hook-tag" type="checkbox" name="tag" value="1" checked>

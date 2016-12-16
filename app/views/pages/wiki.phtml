@@ -22,7 +22,7 @@
 			</li>
 			<?php foreach ($pages as $page) : ?>
 			<li>
-				<a href="<?= $baseUrl->mod("./pages/". rawurlencode($page)) ?>">
+				<a href="<?= $baseUrl->mod(":./pages/". rawurlencode($page)) ?>">
 				<?= $this->e($page) ?>
 				</a>
 			</li>

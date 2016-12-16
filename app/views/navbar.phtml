@@ -9,7 +9,7 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="<?=$baseUrl->mod("./")?>">PHARext</a>
+			<a class="navbar-brand" href="<?=$baseUrl->mod(":./")?>">PHARext</a>
 		</div>
 
 		<!-- Collect the nav links, forms, and other content for toggling -->
@@ -22,25 +22,25 @@
 						data-toggle="dropdown"
 						role="button"
 						aria-expand="false"
-						href="<?=$baseUrl->mod("./pages/Home")?>">
+						href="<?=$baseUrl->mod(":./pages/Home")?>">
 						About
 						<span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu" role="menu">
 						<?php foreach ($pages as $page) : ?>
-						<li><a href="<?= $baseUrl->mod("./pages/". rawurlencode($page)) ?>">
+						<li><a href="<?= $baseUrl->mod(":./pages/". rawurlencode($page)) ?>">
 							<?= $this->e($page) ?></a></li>
 						<?php endforeach; ?>
 					</ul>
 				</li>
 				<?php else : ?>
-				<li><a href="<?=$baseUrl->mod("./pages/Home")?>">About</a></li>
+				<li><a href="<?=$baseUrl->mod(":./pages/Home")?>">About</a></li>
 				<?php endif; ?>
 				<li
 					<?php if ($location == "github") : ?>
 					class="active"
 					<?php endif; ?>
-					><a href="<?=$baseUrl->mod("./github")?>">Github</a>
+					><a href="<?=$baseUrl->mod(":./github")?>">Github</a>
 				</li>
 			</ul>
 			<?php if (isset($session)) : ?>
@@ -60,7 +60,7 @@
 						</a>
 						<ul class="dropdown-menu" role="menu">
 							<li>
-								<a href="<?= $baseUrl->mod("./reset") ?>">
+								<a href="<?= $baseUrl->mod(":./reset") ?>">
 									Signout
 								</a>
 							</li>
