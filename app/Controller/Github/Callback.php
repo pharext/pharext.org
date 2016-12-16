@@ -35,7 +35,7 @@ class Callback extends Github
 				$this->app->redirect($returnto);
 			} else {
 				$this->app->redirect(
-					$this->app->getBaseUrl()->mod("./github"));
+					$this->app->getBaseUrl()->mod(":./github"));
 			}
 		}
 		$this->app->display("github/callback");

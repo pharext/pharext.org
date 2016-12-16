@@ -68,6 +68,7 @@ abstract class Github implements Controller
 			return true;
 		}
 		$this->app->redirect($this->app->getBaseUrl()->mod([
+			"scheme" => null,
 			"path" => "github/signin",
 			"query" => new QueryString(["returnto" => $this->session->current])
 		]));
