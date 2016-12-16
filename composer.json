@@ -27,6 +27,6 @@
 		"m6w6/pq-gateway": "~2.1",
 		"monolog/monolog": "^1.13",
 		"react/promise": "^2.2",
-		"seebz/uri-template": "^1.1"
+		"rize/uri-template": "^0.3.0"
 	}
 }

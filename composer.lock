@@ -4,7 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c926d96f919fd6be117001853d061d17",
+    "hash": "6363aa76ca25a3ca7a2aa3263b7e0a1f",
+    "content-hash": "47325bd6f24fa48e342ffcde7e9fa71b",
     "packages": [
         {
             "name": "league/plates",
@@ -125,6 +126,9 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
+            "include-path": [
+                "src/"
+            ],
             "license": [
                 "BSD-2-Clause"
             ],
@@ -354,16 +358,16 @@
         },
         {
             "name": "rdlowrey/auryn",
-            "version": "1.1.0",
+            "version": "v1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rdlowrey/auryn.git",
-                "reference": "f57eaf665a601dbe061c8b1426d84f58c003e6a8"
+                "reference": "2e4240791162dfe073d59654d8dc06df0eb0b73f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rdlowrey/auryn/zipball/f57eaf665a601dbe061c8b1426d84f58c003e6a8",
-                "reference": "f57eaf665a601dbe061c8b1426d84f58c003e6a8",
+                "url": "https://api.github.com/repos/rdlowrey/auryn/zipball/2e4240791162dfe073d59654d8dc06df0eb0b73f",
+                "reference": "2e4240791162dfe073d59654d8dc06df0eb0b73f",
                 "shasum": ""
             },
             "require": {
@@ -411,7 +415,7 @@
                 "dic",
                 "ioc"
             ],
-            "time": "2015-08-26T16:31:48+00:00"
+            "time": "2016-03-14 20:10:19"
         },
         {
             "name": "react/promise",
@@ -455,58 +459,51 @@
                 }
             ],
             "description": "A lightweight implementation of CommonJS Promises/A for PHP",
-            "time": "2015-07-03T13:48:55+00:00"
+            "time": "2015-07-03 13:48:55"
         },
         {
-            "name": "seebz/uri-template",
-            "version": "1.1.0",
+            "name": "rize/uri-template",
+            "version": "0.3.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/Seebz/uri-template.git",
-                "reference": "f2d7076e9c729a9dcb338ffe5de8e0df73034f38"
+                "url": "https://github.com/rize/UriTemplate.git",
+                "reference": "2496aa674438f1c48fce122ffc44291ad7014717"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seebz/uri-template/zipball/f2d7076e9c729a9dcb338ffe5de8e0df73034f38",
-                "reference": "f2d7076e9c729a9dcb338ffe5de8e0df73034f38",
+                "url": "https://api.github.com/repos/rize/UriTemplate/zipball/2496aa674438f1c48fce122ffc44291ad7014717",
+                "reference": "2496aa674438f1c48fce122ffc44291ad7014717",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
             "require-dev": {
-                "php": ">=5.6.0",
-                "phpunit/phpunit": "^5.7"
+                "phpunit/phpunit": "~4.0.0"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0.x-dev"
-                }
-            },
             "autoload": {
-                "files": [
-                    "src/functions.php"
-                ]
+                "psr-0": {
+                    "Rize\\UriTemplate": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "WTFPL"
+                "MIT"
             ],
             "authors": [
                 {
-                    "name": "Sébastien Corne",
-                    "email": "sebastien@seebz.net",
-                    "homepage": "http://seebz.net"
+                    "name": "Marut K",
+                    "homepage": "http://twitter.com/rezigned"
                 }
             ],
-            "description": "Implementation of RFC 6570 (URI Template) in a single PHP function",
-            "homepage": "https://github.com/Seebz/uri-template",
+            "description": "PHP URI Template (RFC 6570) supports both expansion & extraction",
             "keywords": [
-                "URI Template",
-                "rfc6570"
+                "RFC 6570",
+                "template",
+                "uri"
             ],
-            "time": "2018-02-22T13:25:48+00:00"
+            "time": "2015-04-17 16:12:22"
         }
     ],
     "packages-dev": [],
