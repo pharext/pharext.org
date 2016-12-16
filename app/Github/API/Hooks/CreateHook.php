@@ -10,7 +10,7 @@ use http\Client\Response;
 class CreateHook extends Call
 {
 	function request() {
-		$url = $this->url->mod("./repos/". $this->args["repo"] ."/hooks");
+		$url = $this->url->mod(":./repos/". $this->args["repo"] ."/hooks");
 		$request = new Request("POST", $url, [
 			"Authorization" => "token " . $this->api->getToken(),
 			"Accept" => $this->config->api->accept,

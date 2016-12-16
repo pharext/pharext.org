@@ -82,7 +82,10 @@ abstract class Call
 				$this->request(),
 				function($response) {
 					try {
-						$this->deferred->resolve($this->response($response));
+						$result = $this->response($response);
+						if (!($result instanceof Promise\PromiseInterface)) {
+							$this->deferred->resolve($result);
+						}
 					} catch (\Exception $e) {
 						$this->deferred->reject($e);
 					}
@@ -136,9 +139,17 @@ abstract class Call
 			return false;
 		}
 		if (!$cache->get($key, $cached)) {
+			if ($cached) {
+				$this->api->getLogger()->debug(
+					sprintf("Cache-Stale: $this [TTL=%d]", $cached->getTTL()),
+					$this->args);
+			} else {
+				$this->api->getLogger()->debug("Cache-Miss: $this", $this->args);
+			}
 			return false;
 		}
 		if (null !== $this->api->getMaxAge() && $cached->getAge() > $this->api->getMaxAge()) {
+			$this->api->getLogger()->debug("Cache-Refresh: $this", $this->args);
 			return false;
 		}
 		$this->api->getLogger()->debug("Cache-Hit: $this", $this->args);
@@ -156,6 +167,7 @@ abstract class Call
 			
 			$key = $this->getCacheKey();
 			$cache->set($key, new Item($fresh, $ttl));
+			$this->api->getLogger()->debug("Cache-Push: $this", $this->args);
 		}
 	}
 	
@@ -163,6 +175,7 @@ abstract class Call
 		if (($cache = $this->api->getCacheStorage())) {
 			$key = $this->getCacheKey();
 			$cache->del($key);
+			$this->api->getLogger()->debug("Cache-Drop: $this", $this->args);
 		}
 	}
 }

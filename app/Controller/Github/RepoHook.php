@@ -8,19 +8,20 @@ use app\Github\API\Hooks\ListHooks;
 class RepoHook extends Github
 {
 	function __invoke(array $args = null) {
-		if ($this->checkToken()) {
-			if ($this->app->getRequest()->getRequestMethod() != "POST") {
-				// user had to re-authenticate, and was redirected here
-				$this->app->redirect($this->app->getBaseUrl()->mod([
-					"path" => "./github/repo/" . $args["owner"] ."/". $args["name"],
-					"query" => "modal=hook&hook=" . $args["action"]
-				]));
-			} else {
-				$this->changeHook($args)->done(function() use($args) {
-					$this->redirectBack($args["owner"]."/".$args["name"]);
-				});
-				$this->github->drain();
-			}
+		if (!$this->checkToken()) {
+			return;
+		}
+		if ($this->app->getRequest()->getRequestMethod() != "POST") {
+			// user had to re-authenticate, and was redirected here
+			$this->app->redirect($this->app->getBaseUrl()->mod([
+				"path" => "./github/repo/" . $args["owner"] ."/". $args["name"],
+				"query" => "modal=hook&hook=" . $args["action"]
+			]));
+		} else {
+			$this->changeHook($args)->done(function() use($args) {
+				$this->redirectBack($args["owner"]."/".$args["name"]);
+			});
+			$this->github->drain();
 		}
 	}
 
@@ -79,7 +80,7 @@ class RepoHook extends Github
 		if (($back = $this->app->getRequest()->getForm("returnback")) && isset($this->session->previous)) {
 			$this->app->redirect($this->app->getBaseUrl()->mod($this->session->previous));
 		} else {
-			$this->app->redirect($this->app->getBaseUrl()->mod("./github/repo/" . $repo));
+			$this->app->redirect($this->app->getBaseUrl()->mod(":./github/repo/" . $repo));
 		}
 	}
 }

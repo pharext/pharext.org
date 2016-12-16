@@ -101,7 +101,14 @@ class API
 	}
 
 	function hasToken() {
-		return $this->tokens->get("access_token");
+		if ($this->tokens->get("access_token", $token)) {
+			$access_token = $token->getValue();
+			if (isset($access_token)) {
+				return true;
+			}
+			$this->dropToken();
+		}
+		return false;
 	}
 
 	function setToken($token) {
@@ -143,7 +150,7 @@ class API
 	function fetchToken($code, $state) {
 		if (!$this->tokens->get("state", $orig_state, true)) {
 			if (isset($orig_state)) {
-				$this->logger->notice("State expired", $orig_state);
+				$this->logger->notice("State expired", compact("state", "orig_state"));
 				throw new Exception\StateExpired($orig_state->getLTL());
 			}
 			throw new Exception\StateNotSet;
