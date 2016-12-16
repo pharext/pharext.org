@@ -14,9 +14,7 @@ $injector->share(Cli::class);
 $injector->share(Args::class)
 	->define(Args::class, [
 		":spec" => [
-			[null, "ngrok", "Run ngrok", Args::SINGLE],
-			[null, "initdb", "Create database", Args::SINGLE],
-			[null, "gen-models", "Generate pq\\Gateway models", Args::SINGLE],
+			[0, "command", "Command to run\n- ngrok: Run ngrok\n- initdb: Create database\n- gen-models: Generate pq\\Gatweay models", Args::SINGLE|Args::REQUIRED],
 			["h", "help", "Show this help", Args::HALT],
 		]
 	]);
