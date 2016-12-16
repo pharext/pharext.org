@@ -3,6 +3,8 @@
 namespace app;
 
 require_once __DIR__."/config.php";
+require_once __DIR__."/uri_template.php";
+require_once __DIR__."/session.php";
 
 use http\Url;
 
@@ -16,8 +18,8 @@ $injector->share(Github\API::class)
 				$config->$basic->auth->toArray(),
 				0);
 		}
-		$logger = new Github\Logger($config);
-		
+		$logger = new Logger($config, $config->github->log);
+
 		// FIXME: configure through app.ini
 		try {
 			$cache = new Github\Storage\Redis("gh-cache");
