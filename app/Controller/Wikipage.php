@@ -23,9 +23,9 @@ class Wikipage implements Controller
 		if ($title === "Packager hook") {
 			$baseUrl = $this->app->getBaseUrl();
 			$this->app->getView()->addData([
-				"styles" => [$baseUrl->mod("./highlight/styles/dark.css")],
+				"styles" => [$baseUrl->mod(":./highlight/styles/dark.css")],
 				"scripts" => [
-					$baseUrl->mod("./highlight/highlight.pack.js"),
+					$baseUrl->mod(":./highlight/highlight.pack.js"),
 					"hljs.initHighlightingOnLoad();"
 				]
 			]);

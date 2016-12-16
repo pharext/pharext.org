@@ -38,13 +38,13 @@ class Signin extends Github
 					if (($returnto = $this->app->getRequest()->getQuery("returnto"))) {
 						$this->app->redirect($returnto);
 					} else {
-						$this->app->redirect($this->app->getBaseUrl()->mod("./github"));
+						$this->app->redirect($this->app->getBaseUrl()->mod(":./github"));
 					}
 					return;
 				}
 			}
 		}
-		$callback = $this->app->getBaseUrl()->mod("./github/callback");
+		$callback = $this->app->getBaseUrl()->mod(":./github/callback");
 		$location = $this->github->getAuthUrl($callback);
 		$this->app->redirect($location);
 		if (($returnto = $this->app->getRequest()->getQuery("returnto"))) {
