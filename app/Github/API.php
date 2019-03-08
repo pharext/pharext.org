@@ -133,7 +133,7 @@ class API
 			"state" => $state,
 			"client_id" => $this->config->client->id,
 			"scope" => $this->config->client->scope,
-			"redirect_uri" => $callback_url,
+			"redirect_uri" => (string) $callback_url,
 		];
 		return new Url("https://github.com/login/oauth/authorize", [
 			"query" => new QueryString($param)
