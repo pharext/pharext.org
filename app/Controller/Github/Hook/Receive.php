@@ -20,7 +20,7 @@ class Receive implements Controller
 		$this->accounts = $accounts;
 	}
 	
-	function __invoke(array $args = []) {
+	function __invoke(array $args = null) {
 		$request = $this->app->getRequest();
 		$response = $this->app->getResponse();
 		
