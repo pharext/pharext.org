@@ -45,6 +45,9 @@ class Signin extends Github
 			}
 		}
 		$callback = $this->app->getBaseUrl()->mod(":./github/callback");
+		if (empty($callback->scheme)) {
+			$callback->scheme = "https";
+		}
 		$location = $this->github->getAuthUrl($callback);
 		$this->app->redirect($location);
 		if (($returnto = $this->app->getRequest()->getQuery("returnto"))) {
