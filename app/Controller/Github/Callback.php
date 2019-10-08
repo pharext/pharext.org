@@ -23,9 +23,7 @@ class Callback extends Github
 	
 	function __invoke(array $args = null) {
 		if ($this->app->getRequest()->getQuery("error")) {
-			$this->app->getView()->addData([
-				"error" => $this->app->getRequest()->getQuery("error_description")
-			]);
+			$this->app->getView()->addData($this->app->getRequest()->getQuery()->toArray());
 		} else {
 			$this->validateUser();
 			

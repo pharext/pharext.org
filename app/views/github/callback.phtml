@@ -1,2 +1,8 @@
 <?php $this->layout("layout") ?>
 
+<?php if (isset($error)) : ?>
+<div class="alert alert-warning">
+	<p><?= $this->e($error_description) ?></p>
+	<p>Github error: <a href="<?= $this->e($error_uri)?>"><?= $this->e($error) ?></a></p>
+</div>
+<?php endif; ?>
