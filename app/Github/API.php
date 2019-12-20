@@ -2,7 +2,6 @@
 
 namespace app\Github;
 
-use app\Github\API;
 use app\Github\Storage;
 use app\Github\Exception;
 use app\Pharext;
