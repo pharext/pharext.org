@@ -12,8 +12,9 @@
 		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 		<link rel="stylesheet" href="<?= $baseUrl->mod(":./octicons/octicons.css") ?>">
 		<link rel="stylesheet" href="<?= $baseUrl->mod(":./index.css") ?>">
-		
-		<?php if (!empty($styles)) : ?>
+        <link rel="shortcut icon" type="image/png" href="<?= $baseUrl->mod(":./pharext.png") ?>">
+
+        <?php if (!empty($styles)) : ?>
 			<?php foreach($styles as $style) : ?>
 				<?php if ($style instanceof \http\Url) : ?>
 		
