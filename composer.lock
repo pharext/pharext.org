@@ -82,6 +82,9 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
+            "include-path": [
+                "src/"
+            ],
             "license": [
                 "BSD-2-Clause"
             ],
@@ -103,16 +106,16 @@
         },
         {
             "name": "m6w6/pharext",
-            "version": "v4.1.1",
+            "version": "v4.1.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/m6w6/pharext.git",
-                "reference": "03f7c23b5401098e1c157cc0d36628dc449901ea"
+                "url": "https://github.com/pharext/pharext.git",
+                "reference": "ab3dad846161d248f3c426ebc545cc6eb02fb5bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/m6w6/pharext/zipball/03f7c23b5401098e1c157cc0d36628dc449901ea",
-                "reference": "03f7c23b5401098e1c157cc0d36628dc449901ea",
+                "url": "https://api.github.com/repos/pharext/pharext/zipball/ab3dad846161d248f3c426ebc545cc6eb02fb5bc",
+                "reference": "ab3dad846161d248f3c426ebc545cc6eb02fb5bc",
                 "shasum": ""
             },
             "bin": [
@@ -142,7 +145,7 @@
                 "package",
                 "phar"
             ],
-            "time": "2015-09-03T15:12:31+00:00"
+            "time": "2019-09-10T13:18:30+00:00"
         },
         {
             "name": "m6w6/pharext.wiki",
