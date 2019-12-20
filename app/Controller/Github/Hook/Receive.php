@@ -4,6 +4,7 @@ namespace app\Controller\Github\Hook;
 
 use app\Controller;
 use app\Github\API;
+use app\Github\Exception\TokenNotSet;
 use app\Model\Accounts;
 use app\Web;
 use http\Params;
@@ -101,6 +102,11 @@ class Receive implements Controller
 		}
 		
 		$this->setTokenForUser($release->repository->owner->login);
+		try {
+			$this->github->getToken();
+		} catch (TokenNotSet $e) {
+			$this->setTokenForUser($release->sender->login);
+		}
 		return $this->github->uploadAssetForRelease(
 			$release->release,
 			$release->repository
@@ -115,8 +121,12 @@ class Receive implements Controller
 			$response->getBody()->append("Not a tag");
 			return;
 		}
-		
 		$this->setTokenForUser($create->repository->owner->login);
+		try {
+			$this->github->getToken();
+		} catch (TokenNotSet $e) {
+			$this->setTokenForUser($create->sender->login);
+		}
 		return $this->github->createReleaseFromTag(
 			$create->repository, 
 			$create->ref
